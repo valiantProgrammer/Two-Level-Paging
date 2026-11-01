@@ -565,7 +565,7 @@ This project was developed for the **Operating Systems Course Mini-Project** by 
 
 | Roll Number | Full Name | GitHub Profile | Project Contributions |
 | :---: | :--- | :---: | :--- |
-| **`13030824127`** | **Rupayan Dey** | [![GitHub](https://img.shields.io/badge/GitHub-valiantProgrammer-8b5cf6?style=flat&logo=github)](https://github.com/valiantProgrammer) | Core Engine, Web UI Architecture, Timing Engine & Call Navigation |
+| **`13030824127`** | **Rupayan Dey** | [![GitHub](https://github.com/valiantProgrammer.png?width='20px')](https://github.com/valiantProgrammer?tab=repositories) | Core Engine, Web UI Architecture, Timing Engine & Call Navigation |
 | **`13030824128`** | **Sankhasubhra Basu** | <!-- TODO: add GitHub link --> `[Pending]` | Python CLI Reference, Test Verification & FIFO Allocation Logic |
 | **`13030824126`** | **Rupam Gupta** | <!-- TODO: add GitHub link --> `[Pending]` | Address Bitwise Partitioning, Documentation & Timing Derivations |
 | **`13030824160`** | **Anushka Sau** | <!-- TODO: add GitHub link --> `[Pending]` | TLB LRU Implementation, Test Vectors & Analytics Verification |
