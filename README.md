@@ -271,13 +271,48 @@ $$\text{EAT} = 110 + 40 + 80 = \mathbf{230\,\text{ns}}$$
 
 The zero-dependency web interface is split into 5 purpose-built tabs:
 
-| Tab | Purpose & Features | Preview Slot |
+| Tab | Purpose & Features | Interface Preview |
 | :--- | :--- | :---: |
-| **1. Simulation** | Interactive address entry (`0x12345` or decimal), batch queue execution (`Step Queue`, `Run All`), translation result cards, live access log table, and donut chart. | ![Simulation Tab](docs/screenshots/tab_simulation.png) <!-- TODO: add screenshot --> |
-| **2. Visual Diagram** | Full architectural pipeline diagram with timeline cards, highlighted active tables (CPU, TLB, Page Directory, Page Table, Frame Table, RAM), and synchronized stepper. | ![Visual Diagram Tab](docs/screenshots/tab_visual.png) <!-- TODO: add screenshot --> |
-| **3. Page Tables** | Hierarchical Page Directory tree displaying resident Level 2 tables and an 8-cell physical frame grid showing FIFO occupancy and victim orders. | ![Page Tables Tab](docs/screenshots/tab_page_tables.png) <!-- TODO: add screenshot --> |
-| **4. TLB Cache** | Dedicated 4-slot associative cache inspection table with virtual page numbers, physical frame numbers, validity tags, and MRU/LRU badges. | ![TLB Tab](docs/screenshots/tab_tlb.png) <!-- TODO: add screenshot --> |
-| **5. Results** | Comprehensive summary analytics including effective access time, hit/miss ratios, terminal-style report generator, and clipboard copying. | ![Results Tab](docs/screenshots/tab_results.png) <!-- TODO: add screenshot --> |
+| **1. Simulation** | Interactive address entry (`0x12345` or decimal), batch queue execution (`Step Queue`, `Run All`), translation result cards, live access log table, and donut chart. | <a href="docs/screenshots/tab_simulation.png"><img src="docs/screenshots/tab_simulation.png" alt="Simulation Tab" width="380"></a> |
+| **2. Visual Diagram** | Full architectural pipeline diagram with timeline cards, highlighted active tables (CPU, TLB, Page Directory, Page Table, Frame Table, RAM), and synchronized stepper. | <a href="docs/screenshots/tab_visual.png"><img src="docs/screenshots/tab_visual.png" alt="Visual Diagram Tab" width="380"></a> |
+| **3. Page Tables** | Hierarchical Page Directory tree displaying resident Level 2 tables and an 8-cell physical frame grid showing FIFO occupancy and victim orders. | <a href="docs/screenshots/tab_page_tables.png"><img src="docs/screenshots/tab_page_tables.png" alt="Page Tables Tab" width="380"></a> |
+| **4. TLB Cache** | Dedicated 4-slot associative cache inspection table with virtual page numbers, physical frame numbers, validity tags, and MRU/LRU badges. | <a href="docs/screenshots/tab_tlb.png"><img src="docs/screenshots/tab_tlb.png" alt="TLB Tab" width="380"></a> |
+| **5. Results** | Comprehensive summary analytics including effective access time, hit/miss ratios, terminal-style report generator, and clipboard copying. | <a href="docs/screenshots/tab_results.png"><img src="docs/screenshots/tab_results.png" alt="Results Tab" width="380"></a> |
+
+<details>
+<summary><b>🔍 Click to expand full-resolution tab gallery</b></summary>
+
+### 1. Interactive Simulation Tab
+Interactive translation console featuring bitwise field extraction, latency cards, address queue, real-time access logs, and distribution donut chart.
+<p align="center">
+  <img src="docs/screenshots/tab_simulation.png" alt="Interactive Simulation Tab Preview" width="100%">
+</p>
+
+### 2. Architectural Visual Diagram Tab
+End-to-end hardware translation pipeline showing dynamic data flow, active table illumination, and historical call navigation stepper.
+<p align="center">
+  <img src="docs/screenshots/tab_visual.png" alt="Visual Architecture Diagram Preview" width="100%">
+</p>
+
+### 3. Hierarchical Page Tables Tab
+Inspection of allocated Level 1 Page Directory entries, dynamically spawned Level 2 Page Tables, and the 8-cell Physical Frame allocation grid.
+<p align="center">
+  <img src="docs/screenshots/tab_page_tables.png" alt="Page Tables and Memory Tab Preview" width="100%">
+</p>
+
+### 4. TLB Cache Tab
+Real-time inspection of the 4-slot fully associative translation buffer displaying LRU/MRU temporal tags and eviction order.
+<p align="center">
+  <img src="docs/screenshots/tab_tlb.png" alt="TLB Cache Tab Preview" width="100%">
+</p>
+
+### 5. Analytics & Results Tab
+Aggregate performance metrics, Effective Access Time (EAT), cache hit/miss breakdown, terminal-formatted report, and one-click export.
+<p align="center">
+  <img src="docs/screenshots/tab_results.png" alt="Analytics and Results Tab Preview" width="100%">
+</p>
+
+</details>
 
 ---
 
