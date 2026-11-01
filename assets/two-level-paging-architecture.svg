@@ -1,0 +1,382 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 680" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="archBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#070a14" />
+      <stop offset="50%" stop-color="#0c1022" />
+      <stop offset="100%" stop-color="#090d1c" />
+    </linearGradient>
+
+    <!-- Block Gradients -->
+    <linearGradient id="cpuGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#1d4ed8" />
+    </linearGradient>
+
+    <linearGradient id="tlbGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#6d28d9" />
+    </linearGradient>
+
+    <linearGradient id="pdeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#0e7490" />
+    </linearGradient>
+
+    <linearGradient id="pteGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+
+    <linearGradient id="ramGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#047857" />
+    </linearGradient>
+
+    <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#94a3b8" />
+    </marker>
+
+    <marker id="arrowGreen" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#34d399" />
+    </marker>
+
+    <marker id="arrowPurple" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#c084fc" />
+    </marker>
+
+    <marker id="arrowCyan" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <style>
+    .diagram-title { font-family: 'Inter', sans-serif; font-weight: 800; font-size: 22px; fill: #ffffff; letter-spacing: -0.3px; }
+    .diagram-subtitle { font-family: 'Inter', sans-serif; font-size: 13px; fill: #94a3b8; }
+    .sec-header { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 13.5px; fill: #f8fafc; }
+    .sec-sub { font-family: 'Inter', sans-serif; font-size: 10.5px; fill: #94a3b8; }
+    .mono-bold { font-family: 'Fira Code', monospace; font-weight: 700; font-size: 12px; fill: #ffffff; }
+    .mono-sm { font-family: 'Fira Code', monospace; font-size: 10.5px; fill: #cbd5e1; }
+    .table-cell { font-family: 'Fira Code', monospace; font-size: 10px; fill: #e2e8f0; }
+    .badge-hit { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 10px; fill: #34d399; }
+    .badge-miss { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 10px; fill: #f87171; }
+    .step-tag { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 10.5px; fill: #38bdf8; }
+  </style>
+
+  <!-- Background -->
+  <rect width="1100" height="680" rx="14" fill="url(#archBg)" stroke="rgba(139, 92, 246, 0.3)" stroke-width="1.5" />
+
+  <!-- Top Title Header -->
+  <g transform="translate(40, 36)">
+    <rect width="28" height="28" rx="6" fill="#8b5cf6" />
+    <text x="14" y="19" text-anchor="middle" font-family="'Fira Code', monospace" font-size="16" font-weight="900" fill="#ffffff">M</text>
+    <text x="38" y="21" class="diagram-title">Two-Level Paging &amp; TLB Hardware Translation Pipeline</text>
+    <text x="38" y="38" class="diagram-subtitle">Complete 32-bit Virtual Address to Physical Address translation sequence with Demand Paging</text>
+  </g>
+
+  <!-- ==========================================
+       SECTION 1: 32-BIT VIRTUAL ADDRESS CARD
+       ========================================== -->
+  <g transform="translate(40, 95)">
+    <!-- Main VA Container -->
+    <rect width="1020" height="88" rx="10" fill="rgba(14, 19, 40, 0.9)" stroke="rgba(255, 255, 255, 0.12)" stroke-width="1.2" />
+    
+    <text x="20" y="26" class="sec-header">32-Bit Virtual Address (VA)</text>
+    <text x="235" y="26" class="mono-sm" fill="#38bdf8">[ 10 bits Page Directory | 10 bits Page Table | 12 bits Page Offset (4 KiB) ]</text>
+
+    <!-- Bit Segments -->
+    <!-- Directory Index: bits 31..22 -->
+    <g transform="translate(20, 36)">
+      <rect width="310" height="40" rx="6" fill="rgba(6, 182, 212, 0.15)" stroke="#06b6d4" stroke-width="1.2" />
+      <text x="15" y="20" class="mono-bold" fill="#67e8f9">Directory Index (p1)</text>
+      <text x="15" y="32" class="sec-sub">Bits 31 - 22 (10 bits, 1024 entries)</text>
+      <rect x="250" y="10" width="48" height="20" rx="4" fill="rgba(6, 182, 212, 0.3)" />
+      <text x="274" y="24" text-anchor="middle" class="mono-bold" font-size="11" fill="#ffffff">p1</text>
+    </g>
+
+    <!-- Table Index: bits 21..12 -->
+    <g transform="translate(345, 36)">
+      <rect width="310" height="40" rx="6" fill="rgba(139, 92, 246, 0.15)" stroke="#8b5cf6" stroke-width="1.2" />
+      <text x="15" y="20" class="mono-bold" fill="#c4b5fd">Table Index (p2)</text>
+      <text x="15" y="32" class="sec-sub">Bits 21 - 12 (10 bits, 1024 entries)</text>
+      <rect x="250" y="10" width="48" height="20" rx="4" fill="rgba(139, 92, 246, 0.3)" />
+      <text x="274" y="24" text-anchor="middle" class="mono-bold" font-size="11" fill="#ffffff">p2</text>
+    </g>
+
+    <!-- Offset: bits 11..0 -->
+    <g transform="translate(670, 36)">
+      <rect width="330" height="40" rx="6" fill="rgba(16, 185, 129, 0.15)" stroke="#10b981" stroke-width="1.2" />
+      <text x="15" y="20" class="mono-bold" fill="#6ee7b7">Byte Offset (d)</text>
+      <text x="15" y="32" class="sec-sub">Bits 11 - 0 (12 bits, 4096 bytes / page)</text>
+      <rect x="270" y="10" width="48" height="20" rx="4" fill="rgba(16, 185, 129, 0.3)" />
+      <text x="294" y="24" text-anchor="middle" class="mono-bold" font-size="11" fill="#ffffff">d</text>
+    </g>
+  </g>
+
+  <!-- ==========================================
+       SECTION 2: STEP 1 - TLB LOOKUP
+       ========================================== -->
+  <!-- TLB Block -->
+  <g transform="translate(40, 215)">
+    <rect width="250" height="270" rx="10" fill="rgba(15, 20, 42, 0.95)" stroke="rgba(139, 92, 246, 0.5)" stroke-width="1.5" />
+    <rect x="0" y="0" width="250" height="34" rx="10" fill="rgba(139, 92, 246, 0.2)" />
+    <text x="16" y="22" class="sec-header">Step 1: TLB (Cache)</text>
+    <rect x="180" y="8" width="56" height="18" rx="4" fill="rgba(139, 92, 246, 0.35)" />
+    <text x="208" y="21" text-anchor="middle" font-family="sans-serif" font-size="9.5" font-weight="700" fill="#c4b5fd">LRU 4-way</text>
+
+    <!-- TLB Table Representation -->
+    <g transform="translate(15, 48)">
+      <!-- Header -->
+      <rect width="220" height="22" rx="4" fill="rgba(255, 255, 255, 0.06)" />
+      <text x="12" y="15" font-family="'Fira Code', monospace" font-size="10" font-weight="700" fill="#94a3b8">VPN (p1|p2)</text>
+      <text x="110" y="15" font-family="'Fira Code', monospace" font-size="10" font-weight="700" fill="#94a3b8">Frame #</text>
+      <text x="180" y="15" font-family="'Fira Code', monospace" font-size="10" font-weight="700" fill="#94a3b8">Age</text>
+
+      <!-- Row 1 (MRU) -->
+      <g transform="translate(0, 26)">
+        <rect width="220" height="22" rx="3" fill="rgba(139, 92, 246, 0.2)" stroke="#8b5cf6" stroke-width="0.8" />
+        <text x="12" y="15" class="table-cell" font-weight="700" fill="#ffffff">0x00012</text>
+        <text x="110" y="15" class="table-cell" font-weight="700" fill="#34d399">0x3</text>
+        <text x="180" y="15" class="table-cell" fill="#a5b4fc">MRU</text>
+      </g>
+
+      <!-- Row 2 -->
+      <g transform="translate(0, 52)">
+        <rect width="220" height="22" rx="3" fill="rgba(255, 255, 255, 0.02)" />
+        <text x="12" y="15" class="table-cell">0x00456</text>
+        <text x="110" y="15" class="table-cell" fill="#34d399">0x4</text>
+        <text x="180" y="15" class="table-cell">#2</text>
+      </g>
+
+      <!-- Row 3 -->
+      <g transform="translate(0, 78)">
+        <rect width="220" height="22" rx="3" fill="rgba(255, 255, 255, 0.02)" />
+        <text x="12" y="15" class="table-cell">0x00A02</text>
+        <text x="110" y="15" class="table-cell" fill="#34d399">0x5</text>
+        <text x="180" y="15" class="table-cell">#3</text>
+      </g>
+
+      <!-- Row 4 (LRU) -->
+      <g transform="translate(0, 104)">
+        <rect width="220" height="22" rx="3" fill="rgba(255, 255, 255, 0.02)" />
+        <text x="12" y="15" class="table-cell">0x00008</text>
+        <text x="110" y="15" class="table-cell" fill="#34d399">0x1</text>
+        <text x="180" y="15" class="table-cell" fill="#f87171">LRU</text>
+      </g>
+    </g>
+
+    <!-- TLB Outcome branches -->
+    <g transform="translate(15, 195)">
+      <!-- Hit Box -->
+      <rect x="0" y="0" width="105" height="42" rx="6" fill="rgba(16, 185, 129, 0.15)" stroke="#10b981" />
+      <text x="12" y="18" class="badge-hit">TLB HIT ✓</text>
+      <text x="12" y="32" font-family="'Fira Code', monospace" font-size="9.5" fill="#a7f3d0">10 ns lookup</text>
+
+      <!-- Miss Box -->
+      <rect x="115" y="0" width="105" height="42" rx="6" fill="rgba(239, 68, 68, 0.15)" stroke="#ef4444" />
+      <text x="127" y="18" class="badge-miss">TLB MISS ✗</text>
+      <text x="127" y="32" font-family="'Fira Code', monospace" font-size="9.5" fill="#fca5a5">Walk PT (200ns)</text>
+    </g>
+
+    <text x="16" y="258" font-family="sans-serif" font-size="9.5" fill="#94a3b8">Hit: Skip page table walks entirely!</text>
+  </g>
+
+  <!-- ==========================================
+       SECTION 3: STEP 2 - PAGE DIRECTORY (LEVEL 1)
+       ========================================== -->
+  <g transform="translate(325, 215)">
+    <rect width="225" height="270" rx="10" fill="rgba(15, 20, 42, 0.95)" stroke="rgba(6, 182, 212, 0.5)" stroke-width="1.5" />
+    <rect x="0" y="0" width="225" height="34" rx="10" fill="rgba(6, 182, 212, 0.2)" />
+    <text x="16" y="22" class="sec-header">Step 2: Page Directory</text>
+    
+    <g transform="translate(15, 46)">
+      <rect width="195" height="24" rx="4" fill="rgba(6, 182, 212, 0.15)" stroke="#06b6d4" stroke-width="0.8" />
+      <text x="10" y="16" font-family="'Fira Code', monospace" font-size="10" font-weight="700" fill="#67e8f9">Base: CR3 Register</text>
+    </g>
+
+    <!-- Directory Table Slots -->
+    <g transform="translate(15, 80)">
+      <rect width="195" height="20" rx="3" fill="rgba(255, 255, 255, 0.05)" />
+      <text x="10" y="14" font-family="'Fira Code', monospace" font-size="9.5" fill="#94a3b8">PDE #0x0 ➜ PT0 Base</text>
+
+      <g transform="translate(0, 24)">
+        <rect width="195" height="22" rx="3" fill="rgba(6, 182, 212, 0.25)" stroke="#06b6d4" />
+        <text x="10" y="15" font-family="'Fira Code', monospace" font-size="10" font-weight="700" fill="#ffffff">PDE [p1] ➜ PT[p1] Base</text>
+      </g>
+
+      <g transform="translate(0, 50)">
+        <rect width="195" height="20" rx="3" fill="rgba(255, 255, 255, 0.03)" />
+        <text x="10" y="14" font-family="'Fira Code', monospace" font-size="9.5" fill="#94a3b8">PDE #0x2 ➜ PT2 Base</text>
+      </g>
+
+      <text x="10" y="85" font-family="'Fira Code', monospace" font-size="11" fill="#64748b">...</text>
+
+      <g transform="translate(0, 96)">
+        <rect width="195" height="20" rx="3" fill="rgba(255, 255, 255, 0.03)" />
+        <text x="10" y="14" font-family="'Fira Code', monospace" font-size="9.5" fill="#64748b">PDE #0x3FF ➜ Null/None</text>
+      </g>
+    </g>
+
+    <g transform="translate(15, 222)">
+      <rect width="195" height="34" rx="5" fill="rgba(11, 15, 30, 0.9)" />
+      <text x="10" y="15" font-family="sans-serif" font-size="9.5" fill="#94a3b8">Lookup: p1 indexes PDE</text>
+      <text x="10" y="27" font-family="sans-serif" font-size="9" fill="#38bdf8">1st Memory Access (+100 ns)</text>
+    </g>
+  </g>
+
+  <!-- ==========================================
+       SECTION 4: STEP 3 - PAGE TABLE (LEVEL 2)
+       ========================================== -->
+  <g transform="translate(580, 215)">
+    <rect width="230" height="270" rx="10" fill="rgba(15, 20, 42, 0.95)" stroke="rgba(245, 158, 11, 0.5)" stroke-width="1.5" />
+    <rect x="0" y="0" width="230" height="34" rx="10" fill="rgba(245, 158, 11, 0.2)" />
+    <text x="16" y="22" class="sec-header">Step 3: Page Table (PT)</text>
+    <rect x="175" y="8" width="45" height="18" rx="4" fill="rgba(245, 158, 11, 0.3)" />
+    <text x="197" y="21" text-anchor="middle" font-family="sans-serif" font-size="9.5" font-weight="700" fill="#fbbf24">Level 2</text>
+
+    <!-- PTE Slots -->
+    <g transform="translate(15, 46)">
+      <!-- Header -->
+      <rect width="200" height="22" rx="3" fill="rgba(255, 255, 255, 0.05)" />
+      <text x="10" y="15" font-family="'Fira Code', monospace" font-size="9.5" fill="#94a3b8">Index</text>
+      <text x="75" y="15" font-family="'Fira Code', monospace" font-size="9.5" fill="#94a3b8">Frame (PFN)</text>
+      <text x="165" y="15" font-family="'Fira Code', monospace" font-size="9.5" fill="#94a3b8">V</text>
+
+      <!-- Slot 0 -->
+      <g transform="translate(0, 26)">
+        <rect width="200" height="20" rx="3" fill="rgba(255, 255, 255, 0.02)" />
+        <text x="10" y="14" class="table-cell">0x00</text>
+        <text x="75" y="14" class="table-cell">0x1</text>
+        <text x="165" y="14" class="table-cell" fill="#34d399">1</text>
+      </g>
+
+      <!-- Active Slot (p2) -->
+      <g transform="translate(0, 50)">
+        <rect width="200" height="24" rx="3" fill="rgba(245, 158, 11, 0.25)" stroke="#f59e0b" />
+        <text x="10" y="16" class="table-cell" font-weight="700" fill="#ffffff">[p2]</text>
+        <text x="75" y="16" class="table-cell" font-weight="700" fill="#34d399">PFN (e.g. 0x3)</text>
+        <text x="165" y="16" class="table-cell" font-weight="700" fill="#34d399">1</text>
+      </g>
+
+      <text x="10" y="90" font-family="'Fira Code', monospace" font-size="11" fill="#64748b">...</text>
+
+      <!-- Fault slot -->
+      <g transform="translate(0, 100)">
+        <rect width="200" height="20" rx="3" fill="rgba(239, 68, 68, 0.08)" />
+        <text x="10" y="14" class="table-cell">0x3FF</text>
+        <text x="75" y="14" class="table-cell">—</text>
+        <text x="165" y="14" class="table-cell" fill="#f87171">0</text>
+      </g>
+    </g>
+
+    <!-- Page Fault Check -->
+    <g transform="translate(15, 185)">
+      <rect width="200" height="42" rx="6" fill="rgba(11, 15, 30, 0.9)" stroke="rgba(255, 255, 255, 0.1)" />
+      <text x="10" y="18" font-family="sans-serif" font-size="10" font-weight="700" fill="#f8fafc">Valid Bit = 1 ➜ RAM Hit</text>
+      <text x="10" y="32" font-family="sans-serif" font-size="9" fill="#fca5a5">Valid Bit = 0 ➜ Page Fault ⚠</text>
+    </g>
+
+    <text x="16" y="258" font-family="sans-serif" font-size="9" fill="#94a3b8">2nd Memory Access (+100 ns)</text>
+  </g>
+
+  <!-- ==========================================
+       SECTION 5: PHYSICAL MEMORY (RAM) & PFN
+       ========================================== -->
+  <g transform="translate(840, 215)">
+    <rect width="220" height="270" rx="10" fill="rgba(15, 20, 42, 0.95)" stroke="rgba(16, 185, 129, 0.5)" stroke-width="1.5" />
+    <rect x="0" y="0" width="220" height="34" rx="10" fill="rgba(16, 185, 129, 0.2)" />
+    <text x="16" y="22" class="sec-header">Step 4: Physical RAM</text>
+    <rect x="155" y="8" width="52" height="18" rx="4" fill="rgba(16, 185, 129, 0.3)" />
+    <text x="181" y="21" text-anchor="middle" font-family="sans-serif" font-size="9" font-weight="700" fill="#6ee7b7">8 Frames</text>
+
+    <!-- RAM Frames Stack -->
+    <g transform="translate(15, 46)">
+      <!-- Frame 0 -->
+      <rect width="190" height="20" rx="3" fill="rgba(255, 255, 255, 0.03)" />
+      <text x="10" y="14" class="table-cell">Frame 0: Free</text>
+
+      <!-- Frame 1 -->
+      <g transform="translate(0, 24)">
+        <rect width="190" height="20" rx="3" fill="rgba(255, 255, 255, 0.03)" />
+        <text x="10" y="14" class="table-cell">Frame 1: Free</text>
+      </g>
+
+      <!-- Frame 2 -->
+      <g transform="translate(0, 48)">
+        <rect width="190" height="20" rx="3" fill="rgba(255, 255, 255, 0.03)" />
+        <text x="10" y="14" class="table-cell">Frame 2: Free</text>
+      </g>
+
+      <!-- Frame 3 (Active Target) -->
+      <g transform="translate(0, 72)">
+        <rect width="190" height="24" rx="4" fill="rgba(16, 185, 129, 0.25)" stroke="#10b981" stroke-width="1.2" />
+        <text x="10" y="16" class="table-cell" font-weight="700" fill="#34d399">Frame 3: VPN 0x12 (Active)</text>
+      </g>
+
+      <!-- Frame 4 -->
+      <g transform="translate(0, 100)">
+        <rect width="190" height="20" rx="3" fill="rgba(59, 130, 246, 0.15)" />
+        <text x="10" y="14" class="table-cell" fill="#93c5fd">Frame 4: VPN 0x456</text>
+      </g>
+
+      <!-- Frame 5 -->
+      <g transform="translate(0, 124)">
+        <rect width="190" height="20" rx="3" fill="rgba(59, 130, 246, 0.15)" />
+        <text x="10" y="14" class="table-cell" fill="#93c5fd">Frame 5: VPN 0xA02</text>
+      </g>
+    </g>
+
+    <!-- Replacement Algorithm Note -->
+    <g transform="translate(15, 206)">
+      <rect width="190" height="48" rx="6" fill="rgba(11, 15, 30, 0.9)" />
+      <text x="10" y="18" font-family="sans-serif" font-size="10" font-weight="700" fill="#fbbf24">FIFO Page Replacement</text>
+      <text x="10" y="32" font-family="sans-serif" font-size="9" fill="#94a3b8">Evicts oldest resident page</text>
+      <text x="10" y="44" font-family="sans-serif" font-size="9" fill="#94a3b8">when all 8 frames are full</text>
+    </g>
+  </g>
+
+  <!-- ==========================================
+       SECTION 6: FINAL PHYSICAL ADDRESS ASSEMBLY
+       ========================================== -->
+  <g transform="translate(40, 515)">
+    <rect width="1020" height="135" rx="10" fill="rgba(15, 22, 46, 0.95)" stroke="rgba(52, 211, 153, 0.4)" stroke-width="1.5" />
+    
+    <text x="25" y="32" class="sec-header">Step 5: Physical Address Assembly &amp; Effective Access Time (EAT)</text>
+
+    <!-- PA Formula Banner -->
+    <g transform="translate(25, 48)">
+      <rect width="520" height="65" rx="8" fill="rgba(10, 14, 28, 0.9)" stroke="rgba(255, 255, 255, 0.08)" />
+      <text x="15" y="24" class="mono-bold" font-size="13" fill="#ffffff">Physical Address (32-bit):</text>
+      <text x="15" y="48" font-family="'Fira Code', monospace" font-size="13" font-weight="700" fill="#34d399">
+        PA = (Frame &lt;&lt; 12) | Offset
+      </text>
+      <text x="280" y="48" class="mono-sm" fill="#94a3b8">➜  0x00003000 | 0x345 = 0x00003345</text>
+    </g>
+
+    <!-- Access Time Breakdown Summary -->
+    <g transform="translate(565, 48)">
+      <rect width="430" height="65" rx="8" fill="rgba(10, 14, 28, 0.9)" stroke="rgba(255, 255, 255, 0.08)" />
+      <text x="15" y="20" font-family="'Fira Code', monospace" font-size="11" font-weight="700" fill="#38bdf8">
+        • TLB Hit : 10 ns (TLB) + 100 ns (Mem) = 110 ns
+      </text>
+      <text x="15" y="38" font-family="'Fira Code', monospace" font-size="11" font-weight="700" fill="#c084fc">
+        • TLB Miss: 10 ns + 2×100 ns (PTs) + 100 ns = 310 ns
+      </text>
+      <text x="15" y="56" font-family="'Fira Code', monospace" font-size="11" font-weight="700" fill="#f87171">
+        • Page Fault: 310 ns + 8,000,000 ns (Disk I/O) = 8,000,310 ns
+      </text>
+    </g>
+  </g>
+
+  <!-- Connective Directional Arrows -->
+  <g stroke="#94a3b8" stroke-width="1.6" fill="none">
+    <!-- From VA dirIndex to Page Directory -->
+    <path d="M 175 183 L 175 200 L 437 200 L 437 215" marker-end="url(#arrowhead)" />
+    <!-- From VA tableIndex to Page Table -->
+    <path d="M 500 183 L 500 200 L 695 200 L 695 215" marker-end="url(#arrowhead)" />
+    <!-- From Page Directory to Page Table -->
+    <path d="M 550 350 L 580 350" stroke="#06b6d4" marker-end="url(#arrowCyan)" />
+    <!-- From Page Table to Physical RAM -->
+    <path d="M 810 350 L 840 350" stroke="#f59e0b" marker-end="url(#arrowhead)" />
+  </g>
+</svg>

@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Two-Level Paging + TLB Simulator | OS Virtual Memory</title>
+  <meta name="description"
+    content="Interactive Two-Level Paging and TLB (Translation Lookaside Buffer) Simulator for Operating Systems education, address translation, and memory management.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=3">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Pixelify+Sans:wght@400..700&display=swap"
+    rel="stylesheet">
+</head>
+
+<body>
+  <div class="app-container">
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="app-logo">
+          <svg class="logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 2L3 8L16 14L29 8L16 2Z" fill="url(#grad1)" opacity="0.9" />
+            <path d="M3 14L16 20L29 14" stroke="url(#grad2)" stroke-width="2.5" stroke-linecap="round"
+              stroke-linejoin="round" />
+            <path d="M3 20L16 26L29 20" stroke="url(#grad3)" stroke-width="2.5" stroke-linecap="round"
+              stroke-linejoin="round" />
+            <defs>
+              <linearGradient id="grad1" x1="3" y1="2" x2="29" y2="14" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#818cf8" />
+                <stop offset="1" stop-color="#c084fc" />
+              </linearGradient>
+              <linearGradient id="grad2" x1="3" y1="14" x2="29" y2="20" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#6366f1" />
+                <stop offset="1" stop-color="#a855f7" />
+              </linearGradient>
+              <linearGradient id="grad3" x1="3" y1="20" x2="29" y2="26" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#4f46e5" />
+                <stop offset="1" stop-color="#7e22ce" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="header-titles">
+          <h1 class="app-title">Two-Level Paging + TLB Simulator</h1>
+          <p class="app-subtitle">Operating Systems • Address Translation • TLB • Page Tables</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="btn-top-demo" class="btn btn-secondary" title="Run built-in multi-step demo">
+          <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+              clip-rule="evenodd" />
+          </svg>
+          Demo
+        </button>
+        <button id="btn-top-reset" class="btn btn-secondary" title="Reset simulator state">
+          <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+              clip-rule="evenodd" />
+          </svg>
+          Reset
+        </button>
+        <button id="btn-top-about" class="btn btn-secondary" title="View OS concept details & help">
+          <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+              clip-rule="evenodd" />
+          </svg>
+          About
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Workspace Grid -->
+    <main class="main-layout">
+      <!-- Left Sidebar: Configuration -->
+      <aside class="sidebar-left">
+        <!-- Configuration Card -->
+        <section class="card config-card" id="card-config">
+          <div class="card-header">
+            <span class="card-icon">⚙</span>
+            <h2 class="card-title">Configuration</h2>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label for="cfg-addr-bits">Address Bits</label>
+              <input type="number" id="cfg-addr-bits" class="form-input" value="32" readonly>
+            </div>
+            <div class="form-group">
+              <label for="cfg-page-size">Page Size</label>
+              <div class="select-wrapper">
+                <select id="cfg-page-size" class="form-select">
+                  <option value="4096" selected>4 KiB (2¹²)</option>
+                  <option value="2048">2 KiB(2¹¹)</option>
+                  <option value="1024">1 KiB(2¹⁰)</option>
+                  <option value="8192">8 KiB(2¹³)</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="cfg-dir-bits">Page Directory Bits</label>
+              <input type="number" id="cfg-dir-bits" class="form-input" value="10" min="1" max="20">
+            </div>
+            <div class="form-group">
+              <label for="cfg-tbl-bits">Page Table Bits</label>
+              <input type="number" id="cfg-tbl-bits" class="form-input" value="10" min="1" max="20">
+            </div>
+            <div class="form-group">
+              <label for="cfg-offset-bits">Offset Bits</label>
+              <input type="number" id="cfg-offset-bits" class="form-input" value="12" readonly>
+            </div>
+          </div>
+        </section>
+
+        <!-- TLB & Memory Card -->
+        <section class="card config-card" id="card-tlb-mem">
+          <div class="card-header">
+            <span class="card-icon">💾</span>
+            <h2 class="card-title">TLB & Memory</h2>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label for="cfg-tlb-cap">TLB Capacity</label>
+              <input type="number" id="cfg-tlb-cap" class="form-input" value="4" min="1" max="64">
+            </div>
+            <div class="form-group">
+              <label for="cfg-phys-frames">Physical Frames</label>
+              <input type="number" id="cfg-phys-frames" class="form-input" value="8" min="2" max="128">
+            </div>
+          </div>
+        </section>
+
+        <!-- Timing Card -->
+        <section class="card config-card" id="card-timing">
+          <div class="card-header">
+            <span class="card-icon">⏱</span>
+            <h2 class="card-title">Timing (ns)</h2>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label for="cfg-time-tlb">TLB Lookup Time</label>
+              <input type="number" id="cfg-time-tlb" class="form-input" value="10" min="1">
+            </div>
+            <div class="form-group">
+              <label for="cfg-time-mem">Memory Access Time</label>
+              <input type="number" id="cfg-time-mem" class="form-input" value="100" min="1">
+            </div>
+            <div class="form-group">
+              <label for="cfg-time-pf">Page Fault Service Time</label>
+              <input type="number" id="cfg-time-pf" class="form-input" value="8000000" min="1000">
+            </div>
+            <button id="btn-apply-settings" class="btn btn-primary btn-block">
+              <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clip-rule="evenodd" />
+              </svg>
+              Apply Settings
+            </button>
+          </div>
+        </section>
+      </aside>
+
+      <!-- Center Main Content -->
+      <section class="main-content">
+        <!-- Tabs & Global History Playback Toolbar -->
+        <div class="tabs-and-history-bar">
+          <nav class="nav-tabs" role="tablist">
+            <button class="nav-tab active" data-tab="tab-simulation" role="tab" aria-selected="true">
+              <span class="tab-icon">🖥</span> Simulation
+            </button>
+            <button class="nav-tab" data-tab="tab-visual" role="tab" aria-selected="false">
+              <span class="tab-icon">🗺</span> Visual Diagram
+            </button>
+            <button class="nav-tab" data-tab="tab-page-tables" role="tab" aria-selected="false">
+              <span class="tab-icon">🗂</span> Page Tables
+            </button>
+            <button class="nav-tab" data-tab="tab-tlb" role="tab" aria-selected="false">
+              <span class="tab-icon">⚙</span> TLB
+            </button>
+            <button class="nav-tab" data-tab="tab-results" role="tab" aria-selected="false">
+              <span class="tab-icon">📈</span> Results
+            </button>
+          </nav>
+
+          <!-- History Call Navigation Toolbar -->
+          <div class="history-playback-bar" id="history-playback-bar">
+            <div class="hist-label">
+              <span class="hist-icon">⏱</span> Call History:
+            </div>
+            <button id="btn-hist-first" class="btn btn-xs btn-outline hist-btn" title="Go to First Call (⏮)">⏮ First</button>
+            <button id="btn-hist-prev" class="btn btn-xs btn-secondary hist-btn" title="Previous Call (◀)">◀ Prev</button>
+            <div class="hist-status-pill mono" id="hist-status-pill" title="Current inspected access">
+              <span id="hist-cur-call">Call 4</span> / <span id="hist-tot-call">4</span>
+              <span class="hist-tag live" id="hist-live-tag">Latest</span>
+            </div>
+            <button id="btn-hist-next" class="btn btn-xs btn-secondary hist-btn" title="Next Call (▶)">Next ▶</button>
+            <button id="btn-hist-last" class="btn btn-xs btn-primary hist-btn" title="Go to Most Recent Call (⏭)">⏭ Latest</button>
+          </div>
+        </div>
+
+        <!-- TAB 1: Simulation View -->
+        <div class="tab-pane active" id="tab-simulation">
+          <!-- Address Translation Input Bar -->
+          <div class="card input-card">
+            <div class="input-row">
+              <label for="input-va" class="input-label">Enter Virtual Address</label>
+              <div class="input-wrapper">
+                <input type="text" id="input-va" class="form-input mono" placeholder="0x12345" value="0x12345"
+                  spellcheck="false" autocomplete="off">
+              </div>
+              <button id="btn-translate" class="btn btn-primary">
+                <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                    clip-rule="evenodd" />
+                </svg>
+                Translate
+              </button>
+              <button id="btn-add-queue" class="btn btn-secondary">
+                <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd"
+                    d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                    clip-rule="evenodd" />
+                </svg>
+                Add to Queue
+              </button>
+              <button id="btn-demo-input" class="btn btn-secondary">
+                <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd"
+                    d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
+                    clip-rule="evenodd" />
+                </svg>
+                Demo
+              </button>
+            </div>
+            <div class="input-hint">
+              Enter decimal (e.g., 74565) or hexadecimal (e.g., 0x12345) • Type 'demo' to run the built-in example.
+            </div>
+            <!-- Queue preview if active -->
+            <div id="queue-container" class="queue-container hidden">
+              <div class="queue-header">
+                <span class="queue-title">Pending Address Queue (<span id="queue-count">0</span>)</span>
+                <div class="queue-actions">
+                  <button id="btn-queue-step" class="btn btn-xs btn-primary">Step Next</button>
+                  <button id="btn-queue-run" class="btn btn-xs btn-secondary">Run All</button>
+                  <button id="btn-queue-clear" class="btn btn-xs btn-outline">Clear</button>
+                </div>
+              </div>
+              <div id="queue-chips" class="queue-chips"></div>
+            </div>
+          </div>
+
+          <!-- Last Translation Result Card -->
+          <div class="card result-banner-card" id="last-result-card">
+            <div class="banner-top">
+              <div class="banner-title-group">
+                <div class="banner-icon-badge">
+                  <svg viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
+                    <path fill-rule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clip-rule="evenodd" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="banner-heading">Translation Result <span id="res-call-num" class="hist-call-badge">Call #4</span></h3>
+                  <div class="banner-va">VA: <span id="res-va" class="mono">0x00012345</span></div>
+                </div>
+              </div>
+              <div class="banner-status-badge" id="res-status-badge">
+                <span id="res-badge-text">TLB Hit ✓</span>
+              </div>
+            </div>
+
+            <!-- Address fields breakdown boxes -->
+            <div class="fields-grid">
+              <div class="field-box">
+                <span class="field-label">Dir Index</span>
+                <span class="field-val mono" id="res-dir">0x0 (0)</span>
+              </div>
+              <div class="field-box">
+                <span class="field-label">Table Index</span>
+                <span class="field-val mono" id="res-table">0x12 (18)</span>
+              </div>
+              <div class="field-box">
+                <span class="field-label">Offset</span>
+                <span class="field-val mono" id="res-offset">0x345 (837)</span>
+              </div>
+              <div class="field-box">
+                <span class="field-label">VPN</span>
+                <span class="field-val mono" id="res-vpn">0x12 (18)</span>
+              </div>
+              <div class="field-box">
+                <span class="field-label">Frame (PFN)</span>
+                <span class="field-val mono" id="res-frame">0x3 (3)</span>
+              </div>
+              <div class="field-box highlight-pa">
+                <span class="field-label">Physical Address</span>
+                <span class="field-val mono neon-text" id="res-pa">0x00003345</span>
+              </div>
+            </div>
+
+            <!-- Access Time Formula / Note -->
+            <div class="banner-footer">
+              <span class="time-label">Access Time:</span>
+              <span class="time-value mono" id="res-time-total">110 ns</span>
+              <span class="time-breakdown mono" id="res-time-breakdown">(TLB Hit: 10 ns + Memory: 100 ns)</span>
+              <span class="eviction-notice hidden" id="res-eviction-notice"></span>
+            </div>
+          </div>
+
+          <!-- Mid Row: Address Breakdown & Two-Level Page Table Accessed -->
+          <div class="mid-grid">
+            <!-- Address Breakdown Card -->
+            <div class="card breakdown-card">
+              <div class="card-header">
+                <span class="card-icon">📑</span>
+                <h3 class="card-title">Address Breakdown (32-bit)</h3>
+              </div>
+              <div class="card-body">
+                <div class="bit-breakdown-container">
+                  <div class="bit-labels">
+                    <span class="bit-span bit-dir-span" id="lbl-dir-bits">10 bits</span>
+                    <span class="bit-span bit-tbl-span" id="lbl-tbl-bits">10 bits</span>
+                    <span class="bit-span bit-off-span" id="lbl-off-bits">12 bits</span>
+                  </div>
+                  <div class="bit-blocks">
+                    <div class="bit-block block-dir" id="block-dir">
+                      <span class="block-title">Directory Index</span>
+                      <span class="block-hex mono" id="block-dir-val">0x0</span>
+                    </div>
+                    <div class="bit-block block-tbl" id="block-tbl">
+                      <span class="block-title">Table Index</span>
+                      <span class="block-hex mono" id="block-tbl-val">0x12</span>
+                    </div>
+                    <div class="bit-block block-off" id="block-off">
+                      <span class="block-title">Offset</span>
+                      <span class="block-hex mono" id="block-off-val">0x345</span>
+                    </div>
+                  </div>
+                  <div class="bit-indices">
+                    <span class="idx-edge" id="idx-31">31</span>
+                    <span class="idx-mid" id="idx-22">22</span>
+                    <span class="idx-mid" id="idx-21">21</span>
+                    <span class="idx-mid" id="idx-12">12</span>
+                    <span class="idx-mid" id="idx-11">11</span>
+                    <span class="idx-edge" id="idx-0">0</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Two-Level Page Table (Accessed) -->
+            <div class="card pt-flow-card">
+              <div class="card-header">
+                <span class="card-icon">⚙</span>
+                <h3 class="card-title">Two-Level Page Table (Accessed)</h3>
+              </div>
+              <div class="card-body">
+                <div class="pt-visual-flow">
+                  <!-- Directory Node -->
+                  <div class="pt-node">
+                    <div class="pt-node-title">Page Directory</div>
+                    <div class="pt-box" id="node-pd">
+                      <div class="pt-ellipsis">...</div>
+                      <div class="pt-row active" id="pd-active-row">
+                        <span class="mono" id="pd-entry-text">0x0 → PT₀</span>
+                      </div>
+                      <div class="pt-ellipsis">...</div>
+                    </div>
+                  </div>
+
+                  <!-- Connector Arrow -->
+                  <div class="pt-connector">
+                    <svg class="flow-arrow" viewBox="0 0 40 24" fill="none">
+                      <path d="M0 12H34M34 12L24 4M34 12L24 20" stroke="#8b5cf6" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </div>
+
+                  <!-- Table Node -->
+                  <div class="pt-node">
+                    <div class="pt-node-title" id="pt-node-title">Page Table (PT₀)</div>
+                    <div class="pt-box" id="node-pt">
+                      <div class="pt-ellipsis">...</div>
+                      <div class="pt-row active" id="pt-active-row">
+                        <span class="mono" id="pt-entry-text">0x12 → Frame 0x3</span>
+                      </div>
+                      <div class="pt-ellipsis">...</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom: Access Log Table -->
+          <div class="card log-card">
+            <div class="card-header between">
+              <div class="card-title-group">
+                <span class="card-icon">📄</span>
+                <h3 class="card-title">Access Log</h3>
+              </div>
+              <div class="log-actions">
+                <button id="btn-clear-log" class="btn btn-xs btn-outline">Clear Log</button>
+                <button id="btn-export-csv" class="btn btn-xs btn-secondary">Export CSV</button>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="data-table" id="access-log-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Virtual Address</th>
+                    <th>Dir Idx</th>
+                    <th>Tbl Idx</th>
+                    <th>Offset</th>
+                    <th>VPN</th>
+                    <th>PFN</th>
+                    <th>TLB</th>
+                    <th>Page Fault</th>
+                    <th>Access Time</th>
+                  </tr>
+                </thead>
+                <tbody id="access-log-body">
+                  <!-- Generated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: Visual Representation & Flow View -->
+        <div class="tab-pane" id="tab-visual">
+          <div class="visual-diagram-wrapper">
+            <!-- Visual Top Banner Bar -->
+            <div class="card visual-top-banner">
+              <div class="visual-banner-left">
+                <div class="app-logo visual-mini-logo">
+                  <svg class="logo-icon" viewBox="0 0 32 32" fill="none">
+                    <path d="M16 2L3 8L16 14L29 8L16 2Z" fill="url(#vgrad1)" opacity="0.9" />
+                    <path d="M3 14L16 20L29 14" stroke="url(#vgrad2)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M3 20L16 26L29 20" stroke="url(#vgrad3)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                    <defs>
+                      <linearGradient id="vgrad1" x1="3" y1="2" x2="29" y2="14" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#818cf8" /><stop offset="1" stop-color="#c084fc" />
+                      </linearGradient>
+                      <linearGradient id="vgrad2" x1="3" y1="14" x2="29" y2="20" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#6366f1" /><stop offset="1" stop-color="#a855f7" />
+                      </linearGradient>
+                      <linearGradient id="vgrad3" x1="3" y1="20" x2="29" y2="26" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#4f46e5" /><stop offset="1" stop-color="#7e22ce" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
+                <div class="visual-banner-title">
+                  <h2>Two-Level Paging + TLB <span class="text-secondary font-weight-normal">: Address Translation (Visual Diagram)</span></h2>
+                </div>
+              </div>
+              <div class="visual-banner-right">
+                <div class="pill-badge-group">
+                  <span class="spec-pill" id="vpill-va">32-bit VA</span>
+                  <span class="spec-pill" id="vpill-page">4 KiB Page</span>
+                  <span class="spec-pill" id="vpill-split">10-10-12</span>
+                  <span class="spec-pill" id="vpill-tlb">TLB(LRU)</span>
+                  <span class="spec-pill" id="vpill-frames">FIFO Frames</span>
+                </div>
+                <div class="visual-call-stepper">
+                  <button id="btn-vhist-prev" class="btn btn-xs btn-secondary hist-btn" title="Previous Call">◀</button>
+                  <span class="mono font-xs vcall-tag" id="vhist-step-text">Call 4 / 4</span>
+                  <button id="btn-vhist-next" class="btn btn-xs btn-secondary hist-btn" title="Next Call">▶</button>
+                  <button id="btn-vhist-last" class="btn btn-xs btn-primary hist-btn" title="Latest Call">Latest</button>
+                </div>
+                <button id="btn-toggle-sidebars" class="btn btn-xs btn-outline" title="Toggle sidebars for full-width diagram view">
+                  ⛶ Full Width
+                </button>
+              </div>
+            </div>
+
+            <!-- Visual Content Layout -->
+            <div class="visual-grid-layout">
+              <!-- Left Column: Steps Timeline -->
+              <aside class="visual-steps-col">
+                <div class="card steps-card">
+                  <div class="card-header">
+                    <span class="card-icon">⚡</span>
+                    <h3 class="card-title">Address Translation Steps</h3>
+                  </div>
+                  <div class="card-body steps-body">
+                    <div class="timeline-container">
+                      <!-- Step 1 -->
+                      <div class="timeline-step" id="vstep-item-1">
+                        <div class="step-circle">1</div>
+                        <div class="step-content">
+                          <div class="step-title">CPU issues a memory request</div>
+                          <div class="step-desc mono">Virtual Address : <span id="vstep-va">0x00012345</span></div>
+                        </div>
+                      </div>
+
+                      <!-- Step 2 -->
+                      <div class="timeline-step" id="vstep-item-2">
+                        <div class="step-circle">2</div>
+                        <div class="step-content">
+                          <div class="step-title">Split the address</div>
+                          <div class="step-desc mono" id="vstep-split">(10-bit Dir, 10-bit Table, 12-bit Offset)</div>
+                        </div>
+                      </div>
+
+                      <!-- Step 3 -->
+                      <div class="timeline-step" id="vstep-item-3">
+                        <div class="step-circle">3</div>
+                        <div class="step-content">
+                          <div class="step-title flex-row between">
+                            <span>Check TLB</span>
+                            <span id="vstep-tlb-icon" class="status-icon-badge miss">✗</span>
+                          </div>
+                          <div class="step-desc mono" id="vstep-tlb-text">TLB Miss</div>
+                        </div>
+                      </div>
+
+                      <!-- Step 4 -->
+                      <div class="timeline-step" id="vstep-item-4">
+                        <div class="step-circle">4</div>
+                        <div class="step-content">
+                          <div class="step-title">Page Directory lookup</div>
+                          <div class="step-desc mono" id="vstep-pde">PDE[0x0] → points to Page Table PT₀</div>
+                        </div>
+                      </div>
+
+                      <!-- Step 5 -->
+                      <div class="timeline-step" id="vstep-item-5">
+                        <div class="step-circle">5</div>
+                        <div class="step-content">
+                          <div class="step-title">Page Table lookup</div>
+                          <div class="step-desc mono" id="vstep-pte">PTE[0x12] → Frame = 0x3 (Present)</div>
+                        </div>
+                      </div>
+
+                      <!-- Step 6 -->
+                      <div class="timeline-step highlight-step" id="vstep-item-6">
+                        <div class="step-circle">6</div>
+                        <div class="step-content">
+                          <div class="step-title">Form Physical Address</div>
+                          <div class="step-desc mono" id="vstep-pa-formula">PA = (Frame &lt;&lt; 12) | Offset</div>
+                        </div>
+                      </div>
+
+                      <!-- Step 7 -->
+                      <div class="timeline-step" id="vstep-item-7">
+                        <div class="step-circle">7</div>
+                        <div class="step-content">
+                          <div class="step-title">Access Physical Memory</div>
+                          <div class="step-desc mono" id="vstep-pa">Physical Address : <span id="vstep-pa-val">0x00003345</span></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </aside>
+
+              <!-- Right/Center Column: Visual Workspace -->
+              <div class="visual-main-col">
+                <!-- Top Row: Address decomposition & Translation Result -->
+                <div class="visual-top-row">
+                  <!-- Virtual Address (32-bit) Card -->
+                  <div class="card va-breakdown-card">
+                    <div class="card-header">
+                      <span class="card-icon">⚙</span>
+                      <h3 class="card-title">Virtual Address (32-bit)</h3>
+                    </div>
+                    <div class="card-body">
+                      <div class="va-input-line">
+                        <span class="va-label">Virtual Address (VA) :</span>
+                        <div class="va-pill mono" id="vd-va-pill">0x00012345</div>
+                      </div>
+                      <div class="bit-bracket-line">
+                        <span class="bracket-arrow">├</span>
+                        <span class="bracket-text">32 bits</span>
+                        <span class="bracket-arrow">┤</span>
+                      </div>
+                      <div class="va-segments-bar">
+                        <div class="va-seg seg-dir">
+                          <div class="seg-name">Directory Index</div>
+                          <div class="seg-bits" id="vd-bits-dir">(10 bits)</div>
+                          <div class="seg-val mono" id="vd-val-dir">0x0 (0)</div>
+                        </div>
+                        <div class="va-seg seg-tbl">
+                          <div class="seg-name">Page Table Index</div>
+                          <div class="seg-bits" id="vd-bits-tbl">(10 bits)</div>
+                          <div class="seg-val mono" id="vd-val-tbl">0x12 (18)</div>
+                        </div>
+                        <div class="va-seg seg-off">
+                          <div class="seg-name">Offset</div>
+                          <div class="seg-bits" id="vd-bits-off">(12 bits)</div>
+                          <div class="seg-val mono" id="vd-val-off">0x345 (837)</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Translation Result Card -->
+                  <div class="card result-status-card">
+                    <div class="card-header">
+                      <span class="card-icon text-green">✔</span>
+                      <h3 class="card-title">Translation Result</h3>
+                    </div>
+                    <div class="card-body result-status-grid">
+                      <div class="res-details-col">
+                        <div class="res-line">
+                          <span class="res-lbl">VPN (VA &gt;&gt; 12)</span>
+                          <span class="res-sep">:</span>
+                          <span class="res-data mono" id="vd-res-vpn">0x12 (18)</span>
+                        </div>
+                        <div class="res-line">
+                          <span class="res-lbl">Physical Frame (PFN)</span>
+                          <span class="res-sep">:</span>
+                          <span class="res-data mono" id="vd-res-pfn">0x3 (3)</span>
+                        </div>
+                        <div class="res-line highlight-green">
+                          <span class="res-lbl">Physical Address (PA)</span>
+                          <span class="res-sep">:</span>
+                          <span class="res-data mono neon-text" id="vd-res-pa">0x00003345</span>
+                        </div>
+                      </div>
+                      <div class="res-badges-col">
+                        <div class="badge-row">
+                          <span class="badge-row-lbl">TLB Hit</span>
+                          <span class="badge-row-sep">:</span>
+                          <span id="vd-badge-hit" class="status-pill miss">No</span>
+                        </div>
+                        <div class="badge-row">
+                          <span class="badge-row-lbl">Page Fault</span>
+                          <span class="badge-row-sep">:</span>
+                          <span id="vd-badge-fault" class="status-pill hit">No</span>
+                        </div>
+                        <div class="badge-row">
+                          <span class="badge-row-lbl">Access Time</span>
+                          <span class="badge-row-sep">:</span>
+                          <span id="vd-badge-time" class="status-pill time mono">110 ns</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Center Large Flow Diagram Card -->
+                <div class="card visual-flow-large-card">
+                  <div class="card-header">
+                    <span class="card-icon">⚙</span>
+                    <h3 class="card-title">Visual Diagram – Two-Level Paging Translation</h3>
+                  </div>
+                  <div class="card-body">
+                    <div class="diagram-flow-track">
+                      <!-- 1. CPU Box -->
+                      <div class="flow-stage stage-cpu">
+                        <div class="cpu-box">
+                          <div class="cpu-icon-wrapper">
+                            <svg class="cpu-svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                              <rect x="4" y="4" width="16" height="16" rx="2" stroke-width="2"/>
+                              <rect x="9" y="9" width="6" height="6" stroke-width="2"/>
+                              <path d="M9 1V4M15 1V4M9 20V23M15 20V23M20 9H23M20 15H23M1 9H4M1 15H4" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                          </div>
+                          <div class="cpu-label">CPU</div>
+                          <div class="cpu-sub mono" id="vflow-cpu-va">(VA: 0x00012345)</div>
+                        </div>
+                      </div>
+
+                      <div class="stage-arrow">→</div>
+
+                      <!-- 2. TLB (LRU) -->
+                      <div class="flow-stage stage-tlb">
+                        <div class="stage-step-num">3</div>
+                        <div class="stage-title">TLB (LRU)</div>
+                        <div class="table-stage-box">
+                          <table class="stage-table">
+                            <thead>
+                              <tr><th>VPN</th><th>PFN</th></tr>
+                            </thead>
+                            <tbody id="vflow-tlb-body">
+                              <tr><td>0x4</td><td>0x1</td></tr>
+                              <tr class="selected-row"><td>0x12</td><td>0x3</td></tr>
+                              <tr><td>0x8</td><td>0x5</td></tr>
+                              <tr><td>0xA</td><td>0x7</td></tr>
+                            </tbody>
+                          </table>
+                          <div class="stage-status-footer">
+                            <span id="vflow-tlb-badge" class="stage-badge-pill miss">TLB Miss</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="stage-arrow">→</div>
+
+                      <!-- 3. Page Directory (Level 1) -->
+                      <div class="flow-stage stage-pd">
+                        <div class="stage-step-num">4</div>
+                        <div class="stage-title">Page Directory<br><span class="stage-subtitle">(Level 1)</span></div>
+                        <div class="table-stage-box">
+                          <table class="stage-table">
+                            <thead>
+                              <tr><th>Dir Idx</th><th>PT Base</th></tr>
+                            </thead>
+                            <tbody id="vflow-pd-body">
+                              <tr class="selected-row"><td>0x0</td><td>PT₀</td></tr>
+                              <tr><td>0x1</td><td>PT₁</td></tr>
+                              <tr class="dim-row"><td>...</td><td>...</td></tr>
+                              <tr><td>0x3FF</td><td>—</td></tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+
+                      <div class="stage-arrow">→</div>
+
+                      <!-- 4. Page Table PT0 (Level 2) -->
+                      <div class="flow-stage stage-pt">
+                        <div class="stage-step-num">5</div>
+                        <div class="stage-title" id="vflow-pt-header">Page Table PT₀<br><span class="stage-subtitle">(Level 2)</span></div>
+                        <div class="table-stage-box">
+                          <table class="stage-table">
+                            <thead>
+                              <tr><th>Table Idx</th><th>Frame</th><th>P</th></tr>
+                            </thead>
+                            <tbody id="vflow-pt-body">
+                              <tr><td>0x00</td><td>0x1</td><td>1</td></tr>
+                              <tr class="selected-row"><td>0x12</td><td>0x3</td><td>1</td></tr>
+                              <tr class="dim-row"><td>...</td><td>...</td><td>...</td></tr>
+                              <tr><td>0x3FF</td><td>—</td><td>0</td></tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+
+                      <div class="stage-arrow">→</div>
+
+                      <!-- 5. Frame Table (Physical Memory) -->
+                      <div class="flow-stage stage-frametable">
+                        <div class="stage-title">Frame Table<br><span class="stage-subtitle">(Physical Memory)</span></div>
+                        <div class="table-stage-box">
+                          <table class="stage-table">
+                            <thead>
+                              <tr><th>Frame</th><th>VPN</th><th>Status</th></tr>
+                            </thead>
+                            <tbody id="vflow-frametable-body">
+                              <tr><td>0</td><td>0x4</td><td>Busy</td></tr>
+                              <tr><td>1</td><td>0x8</td><td>Busy</td></tr>
+                              <tr><td>2</td><td>0x15</td><td>Busy</td></tr>
+                              <tr class="selected-row"><td>3</td><td>0x12</td><td>Busy</td></tr>
+                              <tr><td>4</td><td>—</td><td>Free</td></tr>
+                              <tr><td>5</td><td>—</td><td>Free</td></tr>
+                              <tr><td>6</td><td>0xA</td><td>Busy</td></tr>
+                              <tr><td>7</td><td>—</td><td>Free</td></tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+
+                      <!-- 6. Physical Memory (Frames) -->
+                      <div class="flow-stage stage-physmem">
+                        <div class="stage-title">Physical Memory<br><span class="stage-subtitle">(Frames, 4 KiB each)</span></div>
+                        <div class="physmem-stack" id="vflow-physmem-stack">
+                          <div class="mem-frame-row"><span class="frame-tag">F0</span><span class="frame-val">VPN 0x4</span></div>
+                          <div class="mem-frame-row"><span class="frame-tag">F1</span><span class="frame-val">VPN 0x8</span></div>
+                          <div class="mem-frame-row"><span class="frame-tag">F2</span><span class="frame-val">VPN 0x15</span></div>
+                          <div class="mem-frame-row active-frame"><span class="frame-tag">F3</span><span class="frame-val">VPN 0x12</span></div>
+                          <div class="mem-frame-row free-frame"><span class="frame-tag">F4</span><span class="frame-val">Free</span></div>
+                          <div class="mem-frame-row free-frame"><span class="frame-tag">F5</span><span class="frame-val">Free</span></div>
+                          <div class="mem-frame-row"><span class="frame-tag">F6</span><span class="frame-val">VPN 0xA</span></div>
+                          <div class="mem-frame-row free-frame"><span class="frame-tag">F7</span><span class="frame-val">Free</span></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Bottom Formula Bar -->
+                    <div class="pa-formula-bar">
+                      <div class="formula-title">
+                        <span class="card-icon">⚙</span>
+                        <span>Physical Address Calculation</span>
+                        <span class="formula-arrow">›</span>
+                      </div>
+                      <div class="formula-expression mono">
+                        PA = (PFN &lt;&lt; 12) | Offset &nbsp;&nbsp;=&nbsp;&nbsp; (<span id="vcalc-pfn">0x3</span> &lt;&lt; 12) | <span id="vcalc-offset">0x345</span> &nbsp;&nbsp;=&nbsp;&nbsp; <span class="neon-text" id="vcalc-pa">0x00003345</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Bottom Row: 4 Cards (Summary, Tree, Legend, Flowchart) -->
+                <div class="visual-bottom-cards-row">
+                  <!-- Card 1: Summary -->
+                  <div class="card vcard-summary">
+                    <div class="card-header">
+                      <span class="card-icon">🎯</span>
+                      <h3 class="card-title">Summary</h3>
+                    </div>
+                    <div class="card-body">
+                      <div class="vcard-item">
+                        <span class="vcard-lbl">TLB Hit</span>
+                        <span class="vcard-sep">:</span>
+                        <span id="vsum-tlb" class="status-pill miss">No</span>
+                      </div>
+                      <div class="vcard-item">
+                        <span class="vcard-lbl">Page Fault</span>
+                        <span class="vcard-sep">:</span>
+                        <span id="vsum-fault" class="status-pill hit">No</span>
+                      </div>
+                      <div class="vcard-item">
+                        <span class="vcard-lbl">Access Time</span>
+                        <span class="vcard-sep">:</span>
+                        <span id="vsum-time" class="status-pill time mono">110 ns</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Card 2: Two-Level Page Table Structure -->
+                  <div class="card vcard-structure">
+                    <div class="card-header">
+                      <span class="card-icon">🗂</span>
+                      <h3 class="card-title">Two-Level Page Table Structure</h3>
+                    </div>
+                    <div class="card-body">
+                      <div class="tree-diagram">
+                        <div class="tree-root-box">
+                          Page Directory<br><span class="font-xs text-muted">(2¹⁰ entries)</span>
+                        </div>
+                        <div class="tree-branches-line"></div>
+                        <div class="tree-leaves-row">
+                          <div class="tree-leaf active-leaf" id="vleaf-0">PT₀<br><span class="font-xs">(2¹⁰ entries)</span></div>
+                          <div class="tree-leaf" id="vleaf-1">PT₁<br><span class="font-xs">(2¹⁰ entries)</span></div>
+                          <div class="tree-ellipsis">...</div>
+                          <div class="tree-leaf" id="vleaf-max">PT₃FF<br><span class="font-xs">(2¹⁰ entries)</span></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Card 3: Legend -->
+                  <div class="card vcard-legend">
+                    <div class="card-header">
+                      <h3 class="card-title">Legend</h3>
+                    </div>
+                    <div class="card-body legend-compact-body">
+                      <div class="legend-chip-row">
+                        <span class="legend-swatch swatch-green"></span>
+                        <span class="legend-text">Selected / Accessed entry</span>
+                      </div>
+                      <div class="legend-chip-row">
+                        <span class="legend-swatch swatch-purple"></span>
+                        <span class="legend-text">Table / Structure</span>
+                      </div>
+                      <div class="legend-chip-row">
+                        <span class="legend-swatch swatch-blue"></span>
+                        <span class="legend-text">Address field</span>
+                      </div>
+                      <div class="legend-chip-row">
+                        <span class="legend-swatch swatch-red"></span>
+                        <span class="legend-text">Miss / Not found</span>
+                      </div>
+                      <div class="legend-chip-row">
+                        <span class="legend-swatch swatch-gray"></span>
+                        <span class="legend-text">Free frame</span>
+                      </div>
+                      <div class="legend-footer-note font-xs">
+                        <strong>P</strong>: Present bit (1 = in memory, 0 = not present)
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Card 4: Address Translation Flow -->
+                  <div class="card vcard-flowchart">
+                    <div class="card-header">
+                      <span class="card-icon">📈</span>
+                      <h3 class="card-title">Address Translation Flow</h3>
+                    </div>
+                    <div class="card-body flowchart-body">
+                      <div class="flowchart-container">
+                        <div class="fc-node fc-cpu">CPU<br>(VA)</div>
+                        <div class="fc-arrow">→</div>
+                        <div class="fc-diamond-wrapper">
+                          <div class="fc-diamond">TLB<br>Hit?</div>
+                        </div>
+                        <div class="fc-branch-yes">
+                          <span class="fc-branch-lbl yes">Yes</span>
+                          <div class="fc-node fc-tlb-hit">Get PFN<br>(from TLB)</div>
+                          <div class="fc-arrow">→</div>
+                          <div class="fc-node fc-form-pa">Form PA<br>(PFN + Offset)</div>
+                        </div>
+                        <div class="fc-branch-no">
+                          <span class="fc-branch-lbl no">No</span>
+                          <div class="fc-node fc-pde">Page Directory<br>(L1 Lookup)</div>
+                          <div class="fc-arrow">→</div>
+                          <div class="fc-node fc-pte">Page Table<br>(L2 Lookup)</div>
+                          <div class="fc-arrow">→</div>
+                          <div class="fc-node fc-pte-pfn">Get PFN<br>(from PTE)</div>
+                          <div class="fc-arrow-up">⤴</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: Page Tables Detailed View -->
+        <div class="tab-pane" id="tab-page-tables">
+          <div class="page-tables-container">
+            <div class="card">
+              <div class="card-header">
+                <span class="card-icon">🗂</span>
+                <h3 class="card-title">Two-Level Hierarchical Page Table Directory</h3>
+              </div>
+              <div class="card-body">
+                <p class="tab-description">
+                  Displays all currently allocated 1st-level Page Directory entries and their 2nd-level Page Tables
+                  currently resident in memory.
+                </p>
+                <div id="pt-directory-tree" class="pt-directory-tree">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Physical Frame Allocation Map -->
+            <div class="card mt-4">
+              <div class="card-header">
+                <span class="card-icon">🧱</span>
+                <h3 class="card-title">Physical Memory Frames (RAM)</h3>
+              </div>
+              <div class="card-body">
+                <p class="tab-description">
+                  Physical memory split into fixed-size frames. FIFO replacement policy tracks resident virtual pages.
+                </p>
+                <div id="frames-grid" class="frames-grid">
+                  <!-- Populated by JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: TLB Detailed View -->
+        <div class="tab-pane" id="tab-tlb">
+          <div class="tlb-details-container">
+            <div class="card">
+              <div class="card-header between">
+                <div class="card-title-group">
+                  <span class="card-icon">⚙</span>
+                  <h3 class="card-title">Translation Lookaside Buffer (TLB) — Full State</h3>
+                </div>
+                <div class="tlb-stats-mini mono">
+                  Capacity: <span id="tlb-det-cap">4</span> | Entries: <span id="tlb-det-count">0</span>
+                </div>
+              </div>
+              <div class="card-body">
+                <p class="tab-description">
+                  The TLB is a high-speed associative hardware cache. Replacement policy is <strong>Least Recently Used
+                    (LRU)</strong>.
+                </p>
+                <div class="table-responsive">
+                  <table class="data-table tlb-expanded-table">
+                    <thead>
+                      <tr>
+                        <th>Slot</th>
+                        <th>VPN (Hex)</th>
+                        <th>VPN (Dec)</th>
+                        <th>PFN (Frame)</th>
+                        <th>Status / LRU Order</th>
+                        <th>Valid Bit</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tlb-detailed-body">
+                      <!-- Populated by JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: Results & Analytics View -->
+        <div class="tab-pane" id="tab-results">
+          <div class="results-analytics-container">
+            <div class="results-summary-grid">
+              <div class="card metric-card">
+                <div class="metric-title">Effective Access Time (EAT)</div>
+                <div class="metric-value neon-purple mono" id="res-tab-eat">0 ns</div>
+                <div class="metric-sub">Average memory access time including TLB and Faults</div>
+              </div>
+              <div class="card metric-card">
+                <div class="metric-title">TLB Hit Ratio</div>
+                <div class="metric-value neon-green mono" id="res-tab-hitrate">0.00%</div>
+                <div class="metric-sub">Fraction of accesses resolved in 10 ns</div>
+              </div>
+              <div class="card metric-card">
+                <div class="metric-title">Page Fault Ratio</div>
+                <div class="metric-value neon-coral mono" id="res-tab-faultrate">0.00%</div>
+                <div class="metric-sub">Demand-paging fetch overhead</div>
+              </div>
+            </div>
+
+            <!-- EAT Formula Card -->
+            <div class="card mt-4">
+              <div class="card-header">
+                <span class="card-icon">📐</span>
+                <h3 class="card-title">EAT Mathematical Model</h3>
+              </div>
+              <div class="card-body">
+                <div class="formula-box mono">
+                  EAT = Hit_Rate × (T_tlb + T_mem) + (1 - Hit_Rate) × [ (1 - Fault_Rate) × (T_tlb + 2×T_mem + T_mem) +
+                  Fault_Rate × (T_tlb + 3×T_mem + T_fault) ]
+                </div>
+                <div class="report-export-box mt-3">
+                  <div class="flex-row between mb-2">
+                    <span class="text-secondary font-sm">Simulation Summary Report (Terminal Format):</span>
+                    <button id="btn-copy-report" class="btn btn-xs btn-primary">Copy Report</button>
+                  </div>
+                  <pre id="text-report-output" class="terminal-box mono"></pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Sidebar: Statistics & TLB -->
+      <aside class="sidebar-right">
+        <!-- Statistics Card -->
+        <section class="card stats-card" id="card-stats">
+          <div class="card-header">
+            <span class="card-icon">📊</span>
+            <h2 class="card-title">Statistics</h2>
+          </div>
+          <div class="card-body stats-list">
+            <div class="stat-item">
+              <span class="stat-label">Total Accesses</span>
+              <span class="stat-value mono" id="stat-total-accesses">0</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">TLB Hits</span>
+              <span class="stat-value mono" id="stat-tlb-hits">0</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">TLB Misses</span>
+              <span class="stat-value mono" id="stat-tlb-misses">0</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Page Faults</span>
+              <span class="stat-value mono" id="stat-page-faults">0</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">TLB Hit Rate</span>
+              <span class="stat-value mono hit-rate-pill" id="stat-hit-rate">0.00%</span>
+            </div>
+            <div class="stat-item highlight-eat">
+              <span class="stat-label">Effective Access Time (EAT)</span>
+              <span class="stat-value mono eat-badge" id="stat-eat">0 ns</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Access Outcome Card (Donut Chart) -->
+        <section class="card outcome-card" id="card-outcome">
+          <div class="card-header">
+            <span class="card-icon">🎯</span>
+            <h2 class="card-title">Access Outcome</h2>
+          </div>
+          <div class="card-body outcome-chart-layout">
+            <div class="donut-chart-container">
+              <svg class="donut-svg" viewBox="0 0 160 160">
+                <circle class="donut-bg" cx="80" cy="80" r="62" />
+                <circle id="donut-hits" class="donut-segment segment-hit" cx="80" cy="80" r="62"
+                  stroke-dasharray="0 390" stroke-dashoffset="0" />
+                <circle id="donut-misses" class="donut-segment segment-miss" cx="80" cy="80" r="62"
+                  stroke-dasharray="0 390" stroke-dashoffset="0" />
+                <circle id="donut-faults" class="donut-segment segment-fault" cx="80" cy="80" r="62"
+                  stroke-dasharray="0 390" stroke-dashoffset="0" />
+              </svg>
+              <div class="donut-center-text">
+                <div class="center-count mono" id="donut-center-count">0</div>
+                <div class="center-sub">Accesses</div>
+              </div>
+            </div>
+            <div class="chart-legend">
+              <div class="legend-row">
+                <span class="legend-dot dot-hit"></span>
+                <span class="legend-name">TLB Hits</span>
+                <span class="legend-val mono" id="leg-hits-pct">(0%)</span>
+              </div>
+              <div class="legend-row">
+                <span class="legend-dot dot-miss"></span>
+                <span class="legend-name">TLB Misses</span>
+                <span class="legend-val mono" id="leg-misses-pct">(0%)</span>
+              </div>
+              <div class="legend-row">
+                <span class="legend-dot dot-fault"></span>
+                <span class="legend-name">Page Faults</span>
+                <span class="legend-val mono" id="leg-faults-pct">(0%)</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TLB (LRU) Card -->
+        <section class="card tlb-card" id="card-tlb-sidebar">
+          <div class="card-header">
+            <span class="card-icon">⚙</span>
+            <h2 class="card-title">TLB (LRU)</h2>
+          </div>
+          <div class="card-body">
+            <table class="tlb-table">
+              <thead>
+                <tr>
+                  <th>VPN</th>
+                  <th>PFN</th>
+                </tr>
+              </thead>
+              <tbody id="sidebar-tlb-body">
+                <!-- Dynamically populated -->
+                <tr>
+                  <td colspan="2" class="empty-cell">— Empty —</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <!-- Modal: About & Documentation -->
+    <div id="modal-about" class="modal-overlay hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">About Two-Level Paging & TLB Simulator</h2>
+          <button id="modal-close" class="btn-close" aria-label="Close modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <h3>Virtual Memory Concepts</h3>
+          <p>
+            In modern operating systems, physical memory (RAM) is split into fixed-size chunks called
+            <strong>Frames</strong>, and virtual address space is divided into same-sized chunks called
+            <strong>Pages</strong>.
+          </p>
+          <div class="about-grid">
+            <div class="about-card">
+              <h4>1. Address Decomposition</h4>
+              <p>
+                A 32-bit virtual address is partitioned into:
+                <br>• <strong>Page Directory Index</strong> (10 bits)
+                <br>• <strong>Page Table Index</strong> (10 bits)
+                <br>• <strong>Offset</strong> (12 bits) = 4,096 bytes per page
+              </p>
+            </div>
+            <div class="about-card">
+              <h4>2. Translation Lookaside Buffer (TLB)</h4>
+              <p>
+                A high-speed cache located on the CPU MMU that maps VPN directly to PFN. A <strong>TLB Hit</strong>
+                resolves an address in 10 ns without walking multi-level page tables in main memory.
+              </p>
+            </div>
+            <div class="about-card">
+              <h4>3. Demand Paging & FIFO Eviction</h4>
+              <p>
+                When a page is accessed that is not currently resident in physical frames, a <strong>Page Fault</strong>
+                occurs. The OS allocates a free frame or evicts the oldest frame using <strong>First-In First-Out
+                  (FIFO)</strong>.
+              </p>
+            </div>
+            <div class="about-card">
+              <h4>4. Effective Access Time (EAT)</h4>
+              <p>
+                Calculated dynamically based on lookup times:
+                <br>• TLB Hit: TLB (10 ns) + Data Access (100 ns) = 110 ns
+                <br>• TLB Miss (Page in RAM): TLB (10 ns) + 2 Page Walks (200 ns) + Data (100 ns) = 310 ns
+                <br>• Page Fault: 310 ns + Page Fault Service Time (8,000,000 ns)
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="modal-gotit" class="btn btn-primary">Understood</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="simulator.js?v=3"></script>
+</body>
+
+</html>
