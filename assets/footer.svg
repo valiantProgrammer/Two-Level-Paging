@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" width="100%" height="100%" role="img" aria-labelledby="footTitle footDesc">
+  <title id="footTitle">Project Footer</title>
+  <desc id="footDesc">Animated layered sine waves in indigo and violet with Operating Systems Group 6 attribution.</desc>
+
+  <defs>
+    <linearGradient id="waveGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.3" />
+      <stop offset="50%" stop-color="#8b5cf6" stop-opacity="0.45" />
+      <stop offset="100%" stop-color="#06b6d4" stop-opacity="0.3" />
+    </linearGradient>
+
+    <linearGradient id="waveGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#a855f7" stop-opacity="0.2" />
+      <stop offset="50%" stop-color="#6366f1" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.2" />
+    </linearGradient>
+
+    <linearGradient id="footBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0c16" />
+      <stop offset="100%" stop-color="#080a14" />
+    </linearGradient>
+  </defs>
+
+  <style>
+    @keyframes waveMove1 {
+      0% { transform: translateX(0px); }
+      50% { transform: translateX(-60px); }
+      100% { transform: translateX(0px); }
+    }
+    @keyframes waveMove2 {
+      0% { transform: translateX(0px); }
+      50% { transform: translateX(60px); }
+      100% { transform: translateX(0px); }
+    }
+    .wave1 { animation: waveMove1 8s ease-in-out infinite; }
+    .wave2 { animation: waveMove2 10s ease-in-out infinite; }
+    .footer-title { font-family: 'Inter', system-ui, sans-serif; font-size: 14px; font-weight: 700; fill: #f8fafc; letter-spacing: 0.5px; }
+    .footer-sub { font-family: 'Fira Code', ui-monospace, monospace; font-size: 11px; fill: #94a3b8; }
+  </style>
+
+  <!-- Background Panel -->
+  <rect width="1200" height="120" rx="12" fill="url(#footBg)" stroke="rgba(139, 92, 246, 0.3)" stroke-width="1.2" />
+
+  <!-- Animated Layered Sine Waves -->
+  <g opacity="0.6">
+    <path class="wave2" d="M -100 85 Q 200 40, 500 85 T 1100 85 T 1700 85 L 1700 120 L -100 120 Z" fill="url(#waveGrad2)" />
+    <path class="wave1" d="M -100 70 Q 250 100, 600 65 T 1250 65 T 1900 65 L 1900 120 L -100 120 Z" fill="url(#waveGrad1)" />
+  </g>
+
+  <!-- Centered Attribution Content -->
+  <g transform="translate(600, 48)" text-anchor="middle">
+    <!-- Heart Icon -->
+    <text x="0" y="0" class="footer-title">
+      Built with <tspan fill="#ec4899">♥</tspan> by Group 6 · Operating Systems · 2026
+    </text>
+    <text x="0" y="22" class="footer-sub">
+      Two-Level Paging (10-10-12) · TLB (LRU) · Demand Paging (FIFO) · MIT License
+    </text>
+  </g>
+</svg>

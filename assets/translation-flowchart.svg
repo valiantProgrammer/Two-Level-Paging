@@ -1,198 +1,248 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 580" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" width="100%" height="100%" role="img" aria-labelledby="flowTitle flowDesc">
+  <title id="flowTitle">Address Translation and Demand Paging Decision Flowchart</title>
+  <desc id="flowDesc">Animated decision flowchart showing TLB lookup, Page Directory and Page Table walks, Page Fault handler, and FIFO frame eviction.</desc>
+
   <defs>
     <!-- Background Gradient -->
-    <linearGradient id="flowBg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#080b18" />
-      <stop offset="50%" stop-color="#0e1329" />
-      <stop offset="100%" stop-color="#070a14" />
+    <linearGradient id="flBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0c16" />
+      <stop offset="50%" stop-color="#12162e" />
+      <stop offset="100%" stop-color="#070913" />
     </linearGradient>
 
-    <!-- Block Gradients -->
-    <linearGradient id="nodeBlue" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#2563eb" />
+    <!-- Node Gradients -->
+    <linearGradient id="nStart" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6" />
       <stop offset="100%" stop-color="#1d4ed8" />
     </linearGradient>
 
-    <linearGradient id="nodePurple" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#7c3aed" />
-      <stop offset="100%" stop-color="#5b21b6" />
-    </linearGradient>
-
-    <linearGradient id="nodeDiamond" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#d97706" />
+    <linearGradient id="nDecision" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
       <stop offset="100%" stop-color="#b45309" />
     </linearGradient>
 
-    <linearGradient id="nodeGreen" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#059669" />
-      <stop offset="100%" stop-color="#047857" />
-    </linearGradient>
-
-    <linearGradient id="nodeRed" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#dc2626" />
+    <linearGradient id="nFault" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444" />
       <stop offset="100%" stop-color="#b91c1c" />
     </linearGradient>
 
+    <linearGradient id="nEnd" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#047857" />
+    </linearGradient>
+
     <!-- Markers -->
-    <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-      <polygon points="0 0, 8 3, 0 6" fill="#94a3b8" />
+    <marker id="fArr" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+      <polygon points="0 0, 7 2.5, 0 5" fill="#94a3b8" />
     </marker>
-    <marker id="arrowG" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-      <polygon points="0 0, 8 3, 0 6" fill="#10b981" />
+    <marker id="fArrG" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+      <polygon points="0 0, 7 2.5, 0 5" fill="#34d399" />
     </marker>
-    <marker id="arrowR" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
-      <polygon points="0 0, 8 3, 0 6" fill="#ef4444" />
+    <marker id="fArrR" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto">
+      <polygon points="0 0, 7 2.5, 0 5" fill="#f87171" />
     </marker>
   </defs>
 
   <style>
-    .f-title { font-family: 'Inter', sans-serif; font-size: 20px; font-weight: 800; fill: #ffffff; }
-    .f-sub { font-family: 'Inter', sans-serif; font-size: 12px; fill: #94a3b8; }
-    .f-node-title { font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700; fill: #ffffff; text-anchor: middle; }
-    .f-node-desc { font-family: 'Fira Code', monospace; font-size: 10px; fill: #e2e8f0; text-anchor: middle; }
-    .f-dec-text { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 800; fill: #ffffff; text-anchor: middle; }
-    .f-branch { font-family: 'Inter', sans-serif; font-size: 11px; font-weight: 700; }
-    .branch-yes { fill: #34d399; }
-    .branch-no { fill: #f87171; }
+    @keyframes flowDot {
+      0% { stroke-dashoffset: 40; }
+      100% { stroke-dashoffset: 0; }
+    }
+    .flow-line { stroke: #94a3b8; stroke-width: 1.8; fill: none; }
+    .flow-anim { stroke-dasharray: 6 6; animation: flowDot 1.4s linear infinite; }
+    .flow-green { stroke: #10b981; stroke-width: 2; stroke-dasharray: 6 6; animation: flowDot 1.2s linear infinite; fill: none; }
+    .flow-red { stroke: #ef4444; stroke-width: 2; stroke-dasharray: 6 6; animation: flowDot 1.2s linear infinite; fill: none; }
+
+    .node-title { font-family: 'Inter', system-ui, sans-serif; font-size: 11.5px; font-weight: 700; fill: #ffffff; text-anchor: middle; }
+    .node-desc { font-family: 'Fira Code', ui-monospace, monospace; font-size: 9.5px; fill: #e2e8f0; text-anchor: middle; }
+    .diamond-txt { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; font-weight: 800; fill: #ffffff; text-anchor: middle; }
+    .diamond-sub { font-family: 'Fira Code', ui-monospace, monospace; font-size: 8.5px; fill: #fef3c7; text-anchor: middle; }
+    .tag-lbl { font-family: 'Inter', system-ui, sans-serif; font-size: 10px; font-weight: 800; }
   </style>
 
-  <!-- Background -->
-  <rect width="1000" height="580" rx="14" fill="url(#flowBg)" stroke="rgba(139, 92, 246, 0.3)" stroke-width="1.5" />
+  <!-- Panel Background -->
+  <rect width="1000" height="700" rx="14" fill="url(#flBg)" stroke="rgba(139, 92, 246, 0.35)" stroke-width="1.2" />
 
-  <!-- Header -->
-  <g transform="translate(40, 32)">
-    <text x="0" y="20" class="f-title">Address Translation &amp; Page Fault Decision Flowchart</text>
-    <text x="0" y="38" class="f-sub">Hardware TLB lookup, MMU two-level table walk, and Operating System Demand Paging fault recovery</text>
+  <!-- Top Title -->
+  <g transform="translate(40, 28)">
+    <text x="0" y="16" font-family="'Inter', sans-serif" font-size="19px" font-weight="800" fill="#ffffff">Address Translation &amp; Page Fault Decision Flowchart</text>
+    <text x="0" y="32" font-family="'Inter', sans-serif" font-size="11.5px" fill="#94a3b8">Decision graph depicting TLB cache checks, MMU hierarchical walk, demand paging, and FIFO frame eviction</text>
   </g>
 
-  <!-- Node 1: CPU Issues VA -->
-  <g transform="translate(50, 100)">
-    <rect width="170" height="54" rx="8" fill="url(#nodeBlue)" stroke="#60a5fa" stroke-width="1.2" />
-    <text x="85" y="24" class="f-node-title">CPU Issues VA</text>
-    <text x="85" y="42" class="f-node-desc">32-bit Virtual Address</text>
+  <!-- ========================================================
+       ROW 1: START -> RECEIVE VA -> SPLIT ADDRESS -> TLB LOOKUP
+       ======================================================== -->
+
+  <!-- Node: Start -->
+  <g transform="translate(45, 90)">
+    <rect width="100" height="46" rx="23" fill="url(#nStart)" stroke="#60a5fa" stroke-width="1.2" />
+    <text x="50" y="28" class="node-title">Start</text>
   </g>
 
-  <!-- Arrow 1 -> Decision 1 -->
-  <path d="M 220 127 L 275 127" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)" />
+  <!-- Line to Receive VA -->
+  <line x1="145" y1="113" x2="185" y2="113" class="flow-line flow-anim" marker-end="url(#fArr)" />
 
-  <!-- Decision 1: TLB Hit? -->
-  <g transform="translate(285, 127)">
-    <polygon points="0 -35, 55 0, 0 35, -55 0" fill="url(#nodeDiamond)" stroke="#f59e0b" stroke-width="1.5" />
-    <text x="0" y="-4" class="f-dec-text">TLB Hit?</text>
-    <text x="0" y="12" font-family="'Fira Code', monospace" font-size="8.5" fill="#fef3c7" text-anchor="middle">LRU Check</text>
+  <!-- Node: Receive VA -->
+  <g transform="translate(190, 88)">
+    <rect width="160" height="50" rx="7" fill="rgba(18, 24, 48, 0.9)" stroke="rgba(99, 102, 241, 0.5)" stroke-width="1.2" />
+    <text x="80" y="23" class="node-title">1. Receive 32-Bit VA</text>
+    <text x="80" y="38" class="node-desc">CPU Memory Request</text>
   </g>
 
-  <!-- Branch YES from TLB Hit -> TLB Hit Fast Path -->
-  <path d="M 285 92 L 285 70 L 780 70 L 780 95" stroke="#10b981" stroke-width="2" fill="none" marker-end="url(#arrowG)" />
-  <text x="295" y="82" class="f-branch branch-yes">YES (Hit)</text>
+  <!-- Line to Split Address -->
+  <line x1="350" y1="113" x2="390" y2="113" class="flow-line flow-anim" marker-end="url(#fArr)" />
 
-  <!-- Branch NO from TLB Hit -> Page Directory Lookup -->
-  <path d="M 340 127 L 395 127" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowR)" />
-  <text x="348" y="120" class="f-branch branch-no">NO (Miss)</text>
-
-  <!-- Node 2: Page Directory Lookup (Level 1) -->
-  <g transform="translate(405, 100)">
-    <rect width="170" height="54" rx="8" fill="url(#nodePurple)" stroke="#c084fc" stroke-width="1.2" />
-    <text x="85" y="24" class="f-node-title">1. Page Directory</text>
-    <text x="85" y="42" class="f-node-desc">PDE = CR3 + (p1 * 4)</text>
+  <!-- Node: Split Address -->
+  <g transform="translate(395, 88)">
+    <rect width="180" height="50" rx="7" fill="rgba(18, 24, 48, 0.9)" stroke="rgba(139, 92, 246, 0.5)" stroke-width="1.2" />
+    <text x="90" y="23" class="node-title">2. Bitwise Address Split</text>
+    <text x="90" y="38" class="node-desc">p1:10b | p2:10b | d:12b</text>
   </g>
 
-  <!-- Arrow 2 -> Page Table Lookup -->
-  <path d="M 490 154 L 490 195" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)" />
+  <!-- Line to TLB Lookup -->
+  <line x1="575" y1="113" x2="620" y2="113" class="flow-line flow-anim" marker-end="url(#fArr)" />
 
-  <!-- Node 3: Page Table Lookup (Level 2) -->
-  <g transform="translate(405, 205)">
-    <rect width="170" height="54" rx="8" fill="url(#nodePurple)" stroke="#c084fc" stroke-width="1.2" />
-    <text x="85" y="24" class="f-node-title">2. Page Table</text>
-    <text x="85" y="42" class="f-node-desc">PTE = PT_Base + (p2 * 4)</text>
+  <!-- Decision: TLB Lookup (Hit?) -->
+  <g transform="translate(680, 113)">
+    <polygon points="0 -34, 58 0, 0 34, -58 0" fill="url(#nDecision)" stroke="#fbbf24" stroke-width="1.5" />
+    <text x="0" y="-4" class="diamond-txt">TLB Hit?</text>
+    <text x="0" y="12" class="diamond-sub">LRU Cache</text>
   </g>
 
-  <!-- Arrow 3 -> Decision 2: Page Present? -->
-  <path d="M 490 259 L 490 295" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)" />
+  <!-- ========================================================
+       TLB HIT PATH (FAST PATH -> END)
+       ======================================================== -->
+  <!-- Line: TLB Hit (YES) Up & Right -->
+  <path d="M 680 79 L 680 62 L 850 62 L 850 85" class="flow-green" marker-end="url(#fArrG)" />
+  <text x="690" y="72" class="tag-lbl" fill="#34d399">YES (Hit)</text>
 
-  <!-- Decision 2: Page in RAM? (Valid Bit = 1?) -->
-  <g transform="translate(490, 340)">
-    <polygon points="0 -40, 65 0, 0 40, -65 0" fill="url(#nodeDiamond)" stroke="#f59e0b" stroke-width="1.5" />
-    <text x="0" y="-6" class="f-dec-text">Present in RAM?</text>
-    <text x="0" y="12" font-family="'Fira Code', monospace" font-size="8.5" fill="#fef3c7" text-anchor="middle">Valid Bit == 1?</text>
+  <!-- Node: Get PFN from TLB & Mark MRU -->
+  <g transform="translate(765, 88)">
+    <rect width="170" height="50" rx="7" fill="rgba(16, 185, 129, 0.18)" stroke="#10b981" stroke-width="1.2" />
+    <text x="85" y="22" class="node-title" fill="#a7f3d0">Obtain PFN &amp; MRU</text>
+    <text x="85" y="38" class="node-desc" fill="#6ee7b7">Latency: 110 ns</text>
   </g>
 
-  <!-- Branch YES from Page in RAM -> Update TLB and form PA -->
-  <path d="M 555 340 L 680 340" stroke="#10b981" stroke-width="2" marker-end="url(#arrowG)" />
-  <text x="575" y="332" class="f-branch branch-yes">YES (RAM Hit)</text>
+  <!-- Line down to Form PA -->
+  <line x1="850" y1="138" x2="850" y2="185" class="flow-green" marker-end="url(#fArrG)" />
 
-  <!-- Node 4: Update TLB (LRU) -->
-  <g transform="translate(690, 313)">
-    <rect width="180" height="54" rx="8" fill="rgba(139, 92, 246, 0.2)" stroke="#8b5cf6" stroke-width="1.2" />
-    <text x="90" y="24" class="f-node-title">Update TLB</text>
-    <text x="90" y="42" class="f-node-desc">Insert (VPN ➜ PFN)</text>
+  <!-- Node: Form Physical Address -->
+  <g transform="translate(755, 188)">
+    <rect width="190" height="60" rx="8" fill="url(#nEnd)" stroke="#34d399" stroke-width="1.5" />
+    <text x="95" y="24" class="node-title">Form Physical Address</text>
+    <text x="95" y="39" class="node-desc">PA = (PFN &lt;&lt; 12) | d</text>
+    <text x="95" y="52" class="node-desc" fill="#a7f3d0">Access RAM Data</text>
   </g>
 
-  <!-- Path from Update TLB to PA calculation -->
-  <path d="M 780 313 L 780 185" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)" />
-
-  <!-- Branch NO from Page in RAM -> Page Fault Exception -->
-  <path d="M 425 340 L 310 340" stroke="#ef4444" stroke-width="2" marker-end="url(#arrowR)" />
-  <text x="330" y="332" class="f-branch branch-no">NO (Page Fault)</text>
-
-  <!-- Node 5: OS Page Fault Handler -->
-  <g transform="translate(130, 313)">
-    <rect width="170" height="54" rx="8" fill="url(#nodeRed)" stroke="#f87171" stroke-width="1.2" />
-    <text x="85" y="24" class="f-node-title">Page Fault Trap</text>
-    <text x="85" y="42" class="f-node-desc">OS Exception Handler</text>
+  <!-- Line to End -->
+  <line x1="850" y1="248" x2="850" y2="280" class="flow-green" marker-end="url(#fArrG)" />
+  <g transform="translate(805, 280)">
+    <rect width="90" height="36" rx="18" fill="url(#nEnd)" stroke="#34d399" stroke-width="1.2" />
+    <text x="45" y="23" class="node-title">End</text>
   </g>
 
-  <!-- Arrow down to FIFO frame check -->
-  <path d="M 215 367 L 215 410" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)" />
+  <!-- ========================================================
+       TLB MISS PATH (PAGE-TABLE WALK)
+       ======================================================== -->
+  <!-- Line: TLB Miss (NO) Downwards -->
+  <line x1="680" y1="147" x2="680" y2="188" class="flow-red" marker-end="url(#fArrR)" />
+  <text x="690" y="168" class="tag-lbl" fill="#f87171">NO (Miss)</text>
 
-  <!-- Decision 3: Free frame available? -->
-  <g transform="translate(215, 460)">
-    <polygon points="0 -35, 60 0, 0 35, -60 0" fill="url(#nodeDiamond)" stroke="#f59e0b" stroke-width="1.5" />
-    <text x="0" y="-4" class="f-dec-text">Free Frame?</text>
-    <text x="0" y="12" font-family="'Fira Code', monospace" font-size="8.5" fill="#fef3c7" text-anchor="middle">&lt; 8 resident</text>
+  <!-- Node: Page Directory Lookup -->
+  <g transform="translate(585, 190)">
+    <rect width="190" height="50" rx="7" fill="rgba(18, 24, 48, 0.9)" stroke="rgba(6, 182, 212, 0.5)" stroke-width="1.2" />
+    <text x="95" y="22" class="node-title">3. Page Directory Walk</text>
+    <text x="95" y="38" class="node-desc">CR3 + (p1 * 4) ➜ PDE</text>
   </g>
 
-  <!-- Free Frame YES -> Allocate from free queue -->
-  <path d="M 275 460 L 350 460" stroke="#10b981" stroke-width="2" marker-end="url(#arrowG)" />
-  <text x="285" y="452" class="f-branch branch-yes">YES</text>
+  <!-- Line down to Page Table Lookup -->
+  <line x1="680" y1="240" x2="680" y2="280" class="flow-line flow-anim" marker-end="url(#fArr)" />
 
-  <!-- Node 6: Allocate Free Frame -->
-  <g transform="translate(360, 433)">
-    <rect width="160" height="54" rx="8" fill="rgba(16, 185, 129, 0.2)" stroke="#10b981" stroke-width="1.2" />
-    <text x="80" y="24" class="f-node-title">Allocate Free Frame</text>
-    <text x="80" y="42" class="f-node-desc">Free pool dequeue</text>
+  <!-- Node: Page Table Lookup -->
+  <g transform="translate(585, 282)">
+    <rect width="190" height="50" rx="7" fill="rgba(18, 24, 48, 0.9)" stroke="rgba(168, 85, 247, 0.5)" stroke-width="1.2" />
+    <text x="95" y="22" class="node-title">4. Page Table Walk</text>
+    <text x="95" y="38" class="node-desc">PT_Base + (p2 * 4) ➜ PTE</text>
   </g>
 
-  <!-- Free Frame NO -> FIFO Eviction -->
-  <path d="M 155 460 L 95 460 L 95 520 L 360 520" stroke="#ef4444" stroke-width="2" fill="none" marker-end="url(#arrowR)" />
-  <text x="110" y="452" class="f-branch branch-no">NO (Full)</text>
+  <!-- Line down to Present in Memory Decision -->
+  <line x1="680" y1="332" x2="680" y2="375" class="flow-line flow-anim" marker-end="url(#fArr)" />
 
-  <!-- Node 7: FIFO Eviction -->
-  <g transform="translate(360, 498)">
-    <rect width="160" height="44" rx="8" fill="rgba(245, 158, 11, 0.2)" stroke="#f59e0b" stroke-width="1.2" />
-    <text x="80" y="20" class="f-node-title">FIFO Victim Eviction</text>
-    <text x="80" y="34" class="f-node-desc">Evict oldest resident VPN</text>
+  <!-- Decision: Present in RAM? (Valid Bit = 1?) -->
+  <g transform="translate(680, 415)">
+    <polygon points="0 -38, 68 0, 0 38, -68 0" fill="url(#nDecision)" stroke="#fbbf24" stroke-width="1.5" />
+    <text x="0" y="-6" class="diamond-txt">Page Present?</text>
+    <text x="0" y="12" class="diamond-sub">Valid Bit == 1</text>
   </g>
 
-  <!-- From allocation & eviction -> Disk fetch and PTE update -->
-  <path d="M 520 460 L 590 460" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)" />
-  <path d="M 520 520 L 555 520 L 555 460" stroke="#94a3b8" stroke-width="2" fill="none" />
+  <!-- Branch YES (Page in RAM) -> Update TLB and form PA -->
+  <path d="M 748 415 L 795 415 L 795 240 L 760 240" class="flow-green" marker-end="url(#fArrG)" />
+  <text x="752" y="405" class="tag-lbl" fill="#34d399">YES (RAM Hit: 310 ns)</text>
 
-  <!-- Node 8: Bring page from disk & set valid bit -->
-  <g transform="translate(600, 433)">
-    <rect width="170" height="54" rx="8" fill="rgba(14, 165, 233, 0.2)" stroke="#0ea5e9" stroke-width="1.2" />
-    <text x="85" y="22" class="f-node-title">Disk Read &amp; Set PTE</text>
-    <text x="85" y="38" class="f-node-desc">Load page ➜ Valid = 1</text>
+  <!-- Branch NO (Page Fault) Leftwards -->
+  <line x1="612" y1="415" x2="480" y2="415" class="flow-red" marker-end="url(#fArrR)" />
+  <text x="510" y="405" class="tag-lbl" fill="#f87171">NO (Page Fault!)</text>
+
+  <!-- ========================================================
+       PAGE FAULT HANDLING PATH
+       ======================================================== -->
+  <!-- Node: OS Page Fault Handler -->
+  <g transform="translate(290, 390)">
+    <rect width="185" height="50" rx="7" fill="url(#nFault)" stroke="#f87171" stroke-width="1.2" />
+    <text x="92" y="22" class="node-title">PAGE FAULT EXCEPTION</text>
+    <text x="92" y="38" class="node-desc">OS Trap Handler Service</text>
   </g>
 
-  <!-- From Node 8 back to Update TLB -->
-  <path d="M 685 433 L 685 390 L 780 390 L 780 367" stroke="#94a3b8" stroke-width="2" fill="none" marker-end="url(#arrow)" />
+  <!-- Line down to Free Frame Decision -->
+  <line x1="382" y1="440" x2="382" y2="485" class="flow-line flow-anim" marker-end="url(#fArr)" />
 
-  <!-- Node 9: Form Physical Address (PA) -->
-  <g transform="translate(685, 105)">
-    <rect width="190" height="66" rx="8" fill="url(#nodeGreen)" stroke="#34d399" stroke-width="1.5" />
-    <text x="95" y="26" class="f-node-title">Physical Address (PA)</text>
-    <text x="95" y="44" class="f-node-desc">PA = (PFN &lt;&lt; 12) | Offset</text>
-    <text x="95" y="58" font-family="'Fira Code', monospace" font-size="9" fill="#a7f3d0" text-anchor="middle">Access Data in RAM</text>
+  <!-- Decision: Free Frame Available? -->
+  <g transform="translate(382, 525)">
+    <polygon points="0 -34, 60 0, 0 34, -60 0" fill="url(#nDecision)" stroke="#fbbf24" stroke-width="1.5" />
+    <text x="0" y="-4" class="diamond-txt">Free Frame?</text>
+    <text x="0" y="12" class="diamond-sub">&lt; 8 resident</text>
   </g>
+
+  <!-- Free Frame YES -> Allocate directly -->
+  <line x1="442" y1="525" x2="520" y2="525" class="flow-green" marker-end="url(#fArrG)" />
+  <text x="450" y="515" class="tag-lbl" fill="#34d399">YES</text>
+
+  <g transform="translate(525, 502)">
+    <rect width="165" height="46" rx="6" fill="rgba(16, 185, 129, 0.15)" stroke="#10b981" />
+    <text x="82" y="20" class="node-title" fill="#a7f3d0">Allocate Free Frame</text>
+    <text x="82" y="34" class="node-desc" fill="#6ee7b7">Dequeue free_frames</text>
+  </g>
+
+  <!-- Free Frame NO -> Evict FIFO victim -->
+  <path d="M 322 525 L 210 525 L 210 575" class="flow-red" marker-end="url(#fArrR)" />
+  <text x="235" y="515" class="tag-lbl" fill="#f87171">NO (Full)</text>
+
+  <g transform="translate(100, 575)">
+    <rect width="220" height="54" rx="6" fill="rgba(239, 68, 68, 0.15)" stroke="#ef4444" stroke-width="1.2" />
+    <text x="110" y="22" class="node-title" fill="#fca5a5">FIFO Victim Eviction</text>
+    <text x="110" y="36" class="node-desc">Evict oldest resident VPN</text>
+    <text x="110" y="48" class="node-desc" fill="#fca5a5">Clear PTE &amp; TLB Entry</text>
+  </g>
+
+  <!-- From Eviction & Allocation -> Load page from disk -->
+  <path d="M 320 602 L 500 602 L 500 580 L 525 580" class="flow-line flow-anim" marker-end="url(#fArr)" />
+  <line x1="607" y1="548" x2="607" y2="575" class="flow-line flow-anim" marker-end="url(#fArr)" />
+
+  <g transform="translate(525, 575)">
+    <rect width="195" height="54" rx="7" fill="rgba(6, 182, 212, 0.18)" stroke="#06b6d4" stroke-width="1.2" />
+    <text x="97" y="22" class="node-title" fill="#67e8f9">Load Page &amp; Update PTE</text>
+    <text x="97" y="36" class="node-desc">Disk I/O (8,000,000 ns)</text>
+    <text x="97" y="48" class="node-desc" fill="#a5f3fc">Set Valid = 1, PFN</text>
+  </g>
+
+  <!-- From Load Page -> Update TLB & Re-execute -->
+  <path d="M 720 602 L 810 602 L 810 490 L 750 490" class="flow-line flow-anim" marker-end="url(#fArr)" />
+  <g transform="translate(640, 470)">
+    <rect width="180" height="42" rx="6" fill="rgba(139, 92, 246, 0.2)" stroke="#8b5cf6" />
+    <text x="90" y="18" class="node-title" fill="#d8b4fe">Insert Page into TLB</text>
+    <text x="90" y="32" class="node-desc">Evict LRU if full ➜ Form PA</text>
+  </g>
+
+  <!-- Connect to Form Physical Address -->
+  <path d="M 730 470 L 730 220 L 755 220" class="flow-line flow-anim" marker-end="url(#fArr)" />
 </svg>

@@ -1,0 +1,203 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 380" width="100%" height="100%" role="img" aria-labelledby="polTitle polDesc">
+  <title id="polTitle">Cache and Page Replacement Policies</title>
+  <desc id="polDesc">Comparative animated visualization of 4-slot TLB Least Recently Used (LRU) policy and 8-frame physical memory First-In First-Out (FIFO) queue eviction.</desc>
+
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="rpBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0c16" />
+      <stop offset="50%" stop-color="#12162e" />
+      <stop offset="100%" stop-color="#080a14" />
+    </linearGradient>
+
+    <!-- Panel Gradients -->
+    <linearGradient id="pLru" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#6d28d9" />
+    </linearGradient>
+
+    <linearGradient id="pFifo" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#0891b2" />
+    </linearGradient>
+  </defs>
+
+  <style>
+    @keyframes lruSlide {
+      0%, 25% { transform: translateY(0px); }
+      35%, 65% { transform: translateY(32px); }
+      75%, 100% { transform: translateY(0px); }
+    }
+    @keyframes fifoShift {
+      0%, 20% { transform: translateX(0px); }
+      30%, 70% { transform: translateX(-40px); }
+      80%, 100% { transform: translateX(0px); }
+    }
+    @keyframes pulseVictim {
+      0%, 100% { stroke: #ef4444; opacity: 0.6; }
+      50% { stroke: #ef4444; opacity: 1; filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.8)); }
+    }
+    .victim-box { animation: pulseVictim 2s infinite; }
+    .mono-t { font-family: 'Fira Code', ui-monospace, monospace; font-size: 11px; fill: #cbd5e1; }
+    .mono-bold { font-family: 'Fira Code', ui-monospace, monospace; font-size: 11.5px; font-weight: 700; fill: #ffffff; }
+    .p-title { font-family: 'Inter', system-ui, sans-serif; font-size: 14px; font-weight: 800; fill: #ffffff; }
+    .caption-txt { font-family: 'Inter', system-ui, sans-serif; font-size: 11px; font-weight: 600; fill: #94a3b8; }
+  </style>
+
+  <!-- Background Panel -->
+  <rect width="1000" height="380" rx="14" fill="url(#rpBg)" stroke="rgba(139, 92, 246, 0.35)" stroke-width="1.2" />
+
+  <!-- Top Title Header -->
+  <g transform="translate(35, 26)">
+    <text x="0" y="16" font-family="'Inter', sans-serif" font-size="19px" font-weight="800" fill="#ffffff">Memory Replacement Policies</text>
+    <text x="0" y="32" font-family="'Inter', sans-serif" font-size="11.5px" fill="#94a3b8">Hardware TLB Least-Recently-Used (LRU) order maintenance versus Operating System FIFO Frame allocation</text>
+  </g>
+
+  <!-- ========================================================
+       LEFT PANEL: TLB LEAST RECENTLY USED (LRU)
+       ======================================================== -->
+  <g transform="translate(35, 75)">
+    <rect width="445" height="275" rx="10" fill="rgba(18, 22, 46, 0.9)" stroke="rgba(139, 92, 246, 0.5)" stroke-width="1.2" />
+    <rect x="0" y="0" width="445" height="34" rx="10" fill="url(#pLru)" />
+    <text x="20" y="22" class="p-title">TLB: Least Recently Used (LRU)</text>
+    <rect x="330" y="7" width="95" height="20" rx="4" fill="rgba(15, 23, 42, 0.6)" />
+    <text x="377" y="21" text-anchor="middle" font-family="'Fira Code', monospace" font-size="10" font-weight="700" fill="#c4b5fd">4 SLOTS</text>
+
+    <!-- Explanation -->
+    <text x="20" y="58" class="caption-txt">Accesses promote entry to MRU (Top). Overflow drops LRU (Bottom):</text>
+
+    <!-- Slot Stack -->
+    <g transform="translate(20, 72)">
+      <!-- Slot 0 (MRU - Most Recently Used) -->
+      <g transform="translate(0, 0)">
+        <rect width="405" height="30" rx="5" fill="rgba(16, 185, 129, 0.2)" stroke="#10b981" stroke-width="1.2" />
+        <text x="12" y="20" class="mono-bold" fill="#34d399">Slot 0 (MRU)</text>
+        <text x="135" y="20" class="mono-t">VPN: 0x00012</text>
+        <text x="245" y="20" class="mono-t" fill="#34d399">Frame: 0x3</text>
+        <rect x="330" y="5" width="62" height="20" rx="3" fill="rgba(16, 185, 129, 0.3)" />
+        <text x="361" y="19" text-anchor="middle" font-family="'Inter', sans-serif" font-size="9.5" font-weight="800" fill="#ffffff">JUST HIT</text>
+      </g>
+
+      <!-- Slot 1 -->
+      <g transform="translate(0, 36)">
+        <rect width="405" height="28" rx="5" fill="rgba(255, 255, 255, 0.03)" stroke="rgba(255, 255, 255, 0.08)" />
+        <text x="12" y="19" class="mono-t">Slot 1 (Age 1)</text>
+        <text x="135" y="19" class="mono-t">VPN: 0x00456</text>
+        <text x="245" y="19" class="mono-t" fill="#34d399">Frame: 0x4</text>
+        <text x="345" y="19" class="caption-txt">Active</text>
+      </g>
+
+      <!-- Slot 2 -->
+      <g transform="translate(0, 70)">
+        <rect width="405" height="28" rx="5" fill="rgba(255, 255, 255, 0.03)" stroke="rgba(255, 255, 255, 0.08)" />
+        <text x="12" y="19" class="mono-t">Slot 2 (Age 2)</text>
+        <text x="135" y="19" class="mono-t">VPN: 0x00A02</text>
+        <text x="245" y="19" class="mono-t" fill="#34d399">Frame: 0x5</text>
+        <text x="345" y="19" class="caption-txt">Active</text>
+      </g>
+
+      <!-- Slot 3 (LRU - Victim) -->
+      <g transform="translate(0, 104)" class="victim-box">
+        <rect width="405" height="30" rx="5" fill="rgba(239, 68, 68, 0.15)" stroke="#ef4444" stroke-width="1.2" />
+        <text x="12" y="20" class="mono-bold" fill="#f87171">Slot 3 (LRU)</text>
+        <text x="135" y="20" class="mono-t" fill="#fca5a5">VPN: 0x00008</text>
+        <text x="245" y="20" class="mono-t" fill="#f87171">Frame: 0x1</text>
+        <rect x="325" y="5" width="70" height="20" rx="3" fill="rgba(239, 68, 68, 0.3)" />
+        <text x="360" y="19" text-anchor="middle" font-family="'Inter', sans-serif" font-size="9.5" font-weight="800" fill="#ffffff">EVICT NEXT</text>
+      </g>
+    </g>
+
+    <!-- LRU Bottom Footer Note -->
+    <g transform="translate(20, 222)">
+      <rect width="405" height="38" rx="5" fill="rgba(11, 15, 30, 0.9)" />
+      <text x="12" y="16" class="caption-txt" fill="#c4b5fd">Python: <tspan font-family="'Fira Code', monospace">OrderedDict.popitem(last=False)</tspan></text>
+      <text x="12" y="30" class="caption-txt" fill="#94a3b8">JS: <tspan font-family="'Fira Code', monospace">Map.keys().next().value</tspan> maintains true insertion order</text>
+    </g>
+  </g>
+
+  <!-- ========================================================
+       RIGHT PANEL: PHYSICAL MEMORY FIRST-IN, FIRST-OUT (FIFO)
+       ======================================================== -->
+  <g transform="translate(520, 75)">
+    <rect width="445" height="275" rx="10" fill="rgba(18, 22, 46, 0.9)" stroke="rgba(6, 182, 212, 0.5)" stroke-width="1.2" />
+    <rect x="0" y="0" width="445" height="34" rx="10" fill="url(#pFifo)" />
+    <text x="20" y="22" class="p-title">RAM: FIFO Page Replacement</text>
+    <rect x="330" y="7" width="95" height="20" rx="4" fill="rgba(15, 23, 42, 0.6)" />
+    <text x="377" y="21" text-anchor="middle" font-family="'Fira Code', monospace" font-size="10" font-weight="700" fill="#67e8f9">8 FRAMES</text>
+
+    <!-- Explanation -->
+    <text x="20" y="58" class="caption-txt">Pages arrive in a FIFO queue; oldest resident page is evicted first:</text>
+
+    <!-- FIFO Queue Line -->
+    <g transform="translate(20, 75)">
+      <!-- Head Label -->
+      <rect width="55" height="24" rx="4" fill="rgba(239, 68, 68, 0.2)" stroke="#ef4444" />
+      <text x="27" y="16" text-anchor="middle" font-family="'Inter', sans-serif" font-size="9.5" font-weight="800" fill="#f87171">HEAD</text>
+
+      <!-- Arrow -->
+      <text x="64" y="16" font-family="sans-serif" font-size="12" fill="#ef4444">➜</text>
+
+      <!-- Frame Cells Row -->
+      <g transform="translate(80, 0)">
+        <!-- Cell 0 (Oldest / Eviction Target) -->
+        <g transform="translate(0, 0)" class="victim-box">
+          <rect width="52" height="52" rx="5" fill="rgba(239, 68, 68, 0.15)" stroke="#ef4444" stroke-width="1.5" />
+          <text x="26" y="20" text-anchor="middle" font-family="'Fira Code', monospace" font-size="9" font-weight="700" fill="#f87171">F3</text>
+          <text x="26" y="34" text-anchor="middle" font-family="'Fira Code', monospace" font-size="8.5" fill="#ffffff">0x12</text>
+          <text x="26" y="46" text-anchor="middle" font-family="'Inter', sans-serif" font-size="7.5" font-weight="800" fill="#fca5a5">OLDEST</text>
+        </g>
+
+        <!-- Cell 1 -->
+        <g transform="translate(58, 0)">
+          <rect width="44" height="52" rx="5" fill="rgba(18, 24, 48, 0.8)" stroke="rgba(255, 255, 255, 0.1)" />
+          <text x="22" y="20" text-anchor="middle" font-family="'Fira Code', monospace" font-size="9" fill="#94a3b8">F4</text>
+          <text x="22" y="36" text-anchor="middle" font-family="'Fira Code', monospace" font-size="8.5" fill="#ffffff">0x456</text>
+        </g>
+
+        <!-- Cell 2 -->
+        <g transform="translate(108, 0)">
+          <rect width="44" height="52" rx="5" fill="rgba(18, 24, 48, 0.8)" stroke="rgba(255, 255, 255, 0.1)" />
+          <text x="22" y="20" text-anchor="middle" font-family="'Fira Code', monospace" font-size="9" fill="#94a3b8">F5</text>
+          <text x="22" y="36" text-anchor="middle" font-family="'Fira Code', monospace" font-size="8.5" fill="#ffffff">0xA02</text>
+        </g>
+
+        <!-- Cell 3 -->
+        <g transform="translate(158, 0)">
+          <rect width="44" height="52" rx="5" fill="rgba(18, 24, 48, 0.8)" stroke="rgba(255, 255, 255, 0.1)" />
+          <text x="22" y="20" text-anchor="middle" font-family="'Fira Code', monospace" font-size="9" fill="#94a3b8">F6</text>
+          <text x="22" y="36" text-anchor="middle" font-family="'Fira Code', monospace" font-size="8.5" fill="#ffffff">0x80</text>
+        </g>
+
+        <!-- Cell 4 -->
+        <g transform="translate(208, 0)">
+          <rect width="44" height="52" rx="5" fill="rgba(18, 24, 48, 0.8)" stroke="rgba(255, 255, 255, 0.1)" />
+          <text x="22" y="20" text-anchor="middle" font-family="'Fira Code', monospace" font-size="9" fill="#94a3b8">F7</text>
+          <text x="22" y="36" text-anchor="middle" font-family="'Fira Code', monospace" font-size="8.5" fill="#ffffff">0x100</text>
+        </g>
+
+        <!-- Cell 5 (Tail - Newest) -->
+        <g transform="translate(258, 0)">
+          <rect width="54" height="52" rx="5" fill="rgba(16, 185, 129, 0.15)" stroke="#10b981" />
+          <text x="27" y="20" text-anchor="middle" font-family="'Fira Code', monospace" font-size="9" font-weight="700" fill="#34d399">F0</text>
+          <text x="27" y="34" text-anchor="middle" font-family="'Fira Code', monospace" font-size="8.5" fill="#ffffff">0x140</text>
+          <text x="27" y="46" text-anchor="middle" font-family="'Inter', sans-serif" font-size="7.5" font-weight="800" fill="#6ee7b7">NEWEST</text>
+        </g>
+      </g>
+    </g>
+
+    <!-- Replacement Invalidation Warning Box -->
+    <g transform="translate(20, 145)">
+      <rect width="405" height="65" rx="6" fill="rgba(15, 23, 42, 0.85)" stroke="rgba(245, 158, 11, 0.35)" />
+      <text x="12" y="20" font-family="'Inter', sans-serif" font-size="11" font-weight="700" fill="#fbbf24">⚠ Eviction Consistency Guarantee:</text>
+      <text x="12" y="38" class="caption-txt">When FIFO evicts a resident page, the simulator simultaneously:</text>
+      <text x="12" y="52" class="mono-t" fill="#67e8f9">1. Invalidates Page Table Entry (Valid=0)  2. Flushes from TLB</text>
+    </g>
+
+    <!-- Bottom Queue Formula -->
+    <g transform="translate(20, 222)">
+      <rect width="405" height="38" rx="5" fill="rgba(11, 15, 30, 0.9)" />
+      <text x="12" y="16" class="caption-txt" fill="#38bdf8">Python: <tspan font-family="'Fira Code', monospace">collections.deque(fifo_pages).popleft()</tspan></text>
+      <text x="12" y="30" class="caption-txt" fill="#94a3b8">JS: <tspan font-family="'Fira Code', monospace">fifoPages.shift()</tspan> maintains resident arrival sequence</text>
+    </g>
+  </g>
+</svg>

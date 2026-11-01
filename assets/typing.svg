@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 60" width="100%" height="100%" role="img" aria-labelledby="typingTitle typingDesc">
+  <title id="typingTitle">Animated Subtitle Terminal</title>
+  <desc id="typingDesc">Terminal typing animation cycling through core operating system memory concepts.</desc>
+
+  <defs>
+    <linearGradient id="typBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0c16" />
+      <stop offset="100%" stop-color="#12162e" />
+    </linearGradient>
+  </defs>
+
+  <style>
+    .term-prompt { font-family: 'Fira Code', ui-monospace, monospace; font-size: 15px; font-weight: 700; fill: #10b981; }
+    .term-text { font-family: 'Fira Code', ui-monospace, monospace; font-size: 15px; font-weight: 600; fill: #c4b5fd; }
+    .term-cursor { font-family: 'Fira Code', ui-monospace, monospace; font-size: 15px; font-weight: 800; fill: #06b6d4; }
+    @keyframes blink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+    .blinking-cursor { animation: blink 0.8s infinite; }
+  </style>
+
+  <!-- Container Panel -->
+  <rect width="800" height="60" rx="10" fill="url(#typBg)" stroke="rgba(139, 92, 246, 0.3)" stroke-width="1.2" />
+
+  <!-- Terminal Icons -->
+  <circle cx="24" cy="30" r="4.5" fill="#ef4444" opacity="0.8" />
+  <circle cx="38" cy="30" r="4.5" fill="#f59e0b" opacity="0.8" />
+  <circle cx="52" cy="30" r="4.5" fill="#10b981" opacity="0.8" />
+
+  <!-- Prompt symbol -->
+  <text x="75" y="36" class="term-prompt">❯</text>
+
+  <!-- Animated Texts Cycling via SMIL -->
+  <g transform="translate(95, 36)">
+    <!-- Phase 1: Virtual → Physical Translation (0s - 3s) -->
+    <text class="term-text">
+      <tspan fill="#38bdf8">Virtual → Physical Translation</tspan>
+      <animate attributeName="display" values="inline;inline;none;none;none" keyTimes="0;0.20;0.201;0.999;1" dur="15s" repeatCount="indefinite" />
+    </text>
+
+    <!-- Phase 2: Two-Level Page Tables (3s - 6s) -->
+    <text class="term-text">
+      <tspan fill="#a855f7">Two-Level Page Tables (10-10-12)</tspan>
+      <animate attributeName="display" values="none;inline;inline;none;none" keyTimes="0;0.201;0.40;0.401;1" dur="15s" repeatCount="indefinite" />
+    </text>
+
+    <!-- Phase 3: TLB · LRU (6s - 9s) -->
+    <text class="term-text">
+      <tspan fill="#34d399">TLB 4-Way Associative Cache · LRU</tspan>
+      <animate attributeName="display" values="none;none;inline;inline;none" keyTimes="0;0.401;0.60;0.601;1" dur="15s" repeatCount="indefinite" />
+    </text>
+
+    <!-- Phase 4: FIFO Frame Replacement (9s - 12s) -->
+    <text class="term-text">
+      <tspan fill="#fbbf24">Demand Paging · FIFO Frame Replacement</tspan>
+      <animate attributeName="display" values="none;none;none;inline;inline" keyTimes="0;0.601;0.80;0.801;1" dur="15s" repeatCount="indefinite" />
+    </text>
+
+    <!-- Phase 5: EAT Analysis (12s - 15s) -->
+    <text class="term-text">
+      <tspan fill="#f472b6">Effective Access Time (EAT) Analysis</tspan>
+      <animate attributeName="display" values="none;none;none;none;inline" keyTimes="0;0.801;0.999;0.999;1" dur="15s" repeatCount="indefinite" />
+    </text>
+  </g>
+
+  <!-- Blinking Cursor -->
+  <text x="490" y="36" class="term-cursor blinking-cursor">█</text>
+</svg>
