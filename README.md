@@ -565,10 +565,10 @@ This project was developed for the **Operating Systems Course Mini-Project** by 
 
 | Roll Number | Full Name | GitHub Profile | Project Contributions |
 | :---: | :--- | :---: | :--- |
-| **`13030824127`** | **Rupayan Dey** | [![GitHub](https://github.com/valiantProgrammer.png?width='20px')](https://github.com/valiantProgrammer?tab=repositories) | Core Engine, Web UI Architecture, Timing Engine & Call Navigation |
-| **`13030824128`** | **Sankhasubhra Basu** | <!-- TODO: add GitHub link --> [![GitHub](https://github.com/sankhaBasu.png?width='20px')](https://github.com/sankhaBasu?tab=repositories)  | Python CLI Reference, Test Verification & FIFO Allocation Logic |
-| **`13030824126`** | **Rupam Gupta** | <!-- TODO: add GitHub link --> `[Pending]` | Address Bitwise Partitioning, Documentation & Timing Derivations |
-| **`13030824160`** | **Anushka Sau** | <!-- TODO: add GitHub link --> `[Pending]` | TLB LRU Implementation, Test Vectors & Analytics Verification |
+| **`13030824127`** | **Rupayan Dey** | <a href="https://github.com/valiantProgrammer"><img src="https://images.weserv.nl/?url=github.com/valiantProgrammer.png&h=64&w=64&fit=cover&mask=circle" width="30" height="30" alt="Rupayan Dey" style="border-radius: 50%; vertical-align: middle;"></a> <br> <a href="https://github.com/valiantProgrammer">`@valiantProgrammer`</a> | Core Engine, Web UI Architecture, Timing Engine & Call Navigation |
+| **`13030824128`** | **Sankhasubhra Basu** | <!-- TODO: add GitHub link --> <a href="https://github.com/sankhaBasu"><img src="https://images.weserv.nl/?url=github.com/sankhaBasu.png&h=64&w=64&fit=cover&mask=circle" width="30" height="30" alt="Sankhasubhra Basu" style="border-radius: 50%; vertical-align: middle;"></a> <br> <a href="https://github.com/sankhaBasu">`@sankhaBasu`</a> | Python CLI Reference, Test Verification & FIFO Allocation Logic |
+| **`13030824126`** | **Rupam Gupta** | <!-- TODO: add GitHub link --> <img src="https://ui-avatars.com/api/?name=Rupam+Gupta&background=1e1b4b&color=c4b5fd&rounded=true&size=64" width="30" height="30" alt="Rupam Gupta" style="border-radius: 50%; vertical-align: middle;"> <br> <code>[Pending]</code> | Address Bitwise Partitioning, Documentation & Timing Derivations |
+| **`13030824160`** | **Anushka Sau** | <!-- TODO: add GitHub link --> <img src="https://ui-avatars.com/api/?name=Anushka+Sau&background=1e1b4b&color=c4b5fd&rounded=true&size=64" width="30" height="30" alt="Anushka Sau" style="border-radius: 50%; vertical-align: middle;"> <br> <code>[Pending]</code> | TLB LRU Implementation, Test Vectors & Analytics Verification |
 
 <p align="center">
   <span style="background: rgba(139,92,246,0.2); border: 1px solid #8b5cf6; padding: 4px 14px; border-radius: 12px; font-weight: 700; color: #c4b5fd;">
